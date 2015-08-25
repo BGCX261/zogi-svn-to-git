@@ -1,0 +1,21 @@
+#summary The objectLink entity
+
+The [objectLink] entity represents an [ObjectLink Object Link].
+
+Links in [OpenGroupware] are directional, and this is represented in the "direction" key of the [objectLink] entity.  If the link originates with the object whose OBJECTLINKS key contains the [objectLink] then the direction is "from" otherwise the [objectLink] represents a link originating from another object to the current object and the direction is "to".
+
+The "targetEntityName" (if the "direction" is "from") or the "sourceEntityName" (if the direction is "to") is the entity name of the object on the other end of the link.
+
+= Example =
+
+{{{
+{'direction': 'from', 
+ 'objectId': '15990', 
+ 'entityName': 'objectLink', 
+ 'targetEntityName': 'Contact', 
+ 'targetObjectId': '10000', 
+ 'label': 'Object Link Label', 
+ 'type': 'generic'}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

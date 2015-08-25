@@ -1,0 +1,47 @@
+#summary The timeZone entity.
+
+= timeZone =
+
+The [timeZone] entity represents a time zone definition from the server's time zone tables.   A [timeZone] is an [UnderstandingEntities improper entity] which can be uniquely identified by the *abbreviation* attribute.  The time zones known to the server can be retrieved via a call to [searchForObjects] specifying an entity type of 'TimeZones".
+
+The criteria, detail, and flag parameters of [searchForObjects] are ignored when requesting the server's time zones.  All known time zones are returned regardless of criteria or flags. 
+
+*NOTE:* To retrieve the server's current time and its perception of the client's time see the documentation of the [time] entity.
+
+= Examples =
+
+{{{
+  server.zogi.searchForObjects('TimeZones', '', 0)
+}}}
+
+{{{
+ {'abbreviation': 'NZDT',
+  'description': 'NZ',
+  'entityName': 'timeZone',
+  'isCurrentlyDST': True,
+  'offsetFromGMT': 46800,
+  'serverDateTime': <DateTime '20071110T03:49:55' at b7b5f82c>}
+
+ {'abbreviation': 'GMT-0800',
+  'description': 'GMT-8',
+  'entityName': 'timeZone',
+  'isCurrentlyDST': False,
+  'offsetFromGMT': -28800,
+  'serverDateTime': <DateTime '20071110T03:49:55' at b7b5f8ac>}
+
+ {'abbreviation': 'GMT+0300',
+  'description': 'GMT+3',
+  'entityName': 'timeZone',
+  'isCurrentlyDST': False,
+  'offsetFromGMT': 10800,
+  'serverDateTime': <DateTime '20071110T03:49:55' at b7b5f92c>}
+
+ {'abbreviation': 'PST',
+  'description': 'US/Pacific',
+  'entityName': 'timeZone',
+  'isCurrentlyDST': False,
+  'offsetFromGMT': -28800,
+  'serverDateTime': <DateTime '20071110T03:49:55' at b7b5f98c>}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

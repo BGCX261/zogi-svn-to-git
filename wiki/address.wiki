@@ -1,0 +1,25 @@
+#summary The address entity
+
+This entity is a physical address;  each address is associated with either a [Contact] or [Enterprise] entity.  The "companyObjectId" is the "objectId" of the entity to which the [address] belongs.
+
+The *district* attribute was added as of revision 2276 (2009-09-14) of v5.5;  previous versions do not have a *district* attribute in [address].
+
+= Example =
+
+{{{
+ {'city': '',
+  'companyObjectId': 10160,
+  'country': '',
+  'entityName': 'address',
+  'name1': '',
+  'name2': '',
+  'name3': '',
+  'objectId': 10210,
+  'state': '',
+  'street': '',
+  'type': 'location',
+  'district': '9',
+  'zip': ''}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

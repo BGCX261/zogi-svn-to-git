@@ -1,0 +1,12 @@
+#summary The Unknown entity
+
+The [Unknown] entity is return by [getObjectById] and [getObjectById] when an objectId is requested that the server does not recognize.  The objectId may be incorrect or that of a recently deleted object.  Upon receiving an [Unknown] entity as a response to a request the client *MUST* purge its cache of all references to that entity/object.
+
+= Example =
+
+{{{
+{'entityName': 'Unknown', 
+ 'objectId': 470650}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

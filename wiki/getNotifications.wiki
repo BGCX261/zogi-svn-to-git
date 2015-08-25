@@ -1,0 +1,29 @@
+#summary The getNotifications method
+
+= Important =
+
+[getNotifications] is an administrative function;  invoking this method with any credentials other than those of the [OpenGroupware.org] superuser will result in an exception.
+
+Once an [Appointment] is qualified for notification and the [notification] entities are returned to the client the "notificationTime" attribute of the [Appointment] is cleared.
+
+= Details =
+
+The [getNotifications] method returns a [notification] entity for each pending notification.  
+
+  * The minimum notification time is 10 minutes.  
+  * The maximum notification time before an appointment is 8 days.
+
+For site-specific notification methods it is recommended to call [getNotifications] at a regular interval of less than 10 minutes with a start date of the current time minus the poll interval and an end time of the current time plus nine days.
+
+= Example =
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib, time, pprint
+
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+result = server.zogi.getNotifications('2007-09-14 13:35', '2007-09-23 13:35')
+pprint.pprint(result)
+}}}
+
+[http://code.google.com/p/zogi/ Home]

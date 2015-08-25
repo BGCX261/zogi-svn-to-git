@@ -1,0 +1,188 @@
+#summary Using zOGI From PHP
+
+  * The zOGI subversion repository contains two wrapper classes for the zOGI API.
+    * http://zogi.googlecode.com/svn/trunk/Bindings/PHP/zogi.php *_unmaintained_*
+    * http://zogi.googlecode.com/svn/trunk/Bindings/PHP/zogi+memcache.php
+  * These files *should be* API interchangable.
+    * It is advised that sites and applications be built using the "zogi+memcache.php" class.
+  * The only requirement of these classes is PEAR XML_RPC 1.5.1 and syslog support.
+    * http://pear.php.net/package/XML_RPC
+    * Calls to syslog can be commented out without affecting behavior if your host does not support PHP's syslog extension.
+
+= Arrays and Dictionaries ==
+
+*THIS IS A NOTE TO PHP DEVELOPERS NOT FAMALIAR WITH OTHER ENVIRONMENTS*
+
+First, PHP is weird, and possibly just broken.  There, we said it, so that is out of the way.  This isn't to say PHP isn't useful and great for lots of things - but some things about it are just *dumb*.  The most frustrating thing about PHP is its really sloppy/inconsistent use of assignment by copy vs. assignment by reference.  The second most annoying thing, and the one relevant to here, is that PHP *HAS NO ARRAY TYPE*.  That is correct,  there is no such thing in PHP as an array.  PHP arrays are dictionaries.  Most traditional, and all (?) more strongly typed, languages distinguish between an array and a dictionary.  Sometimes dictionaries are refered to as "structures", although "structure" can mean something slightly different as well.
+
+This is an array: {{{ {'abc', 'def', 'ghj'} }}}.  An array is merely a collection of value with no index other than their order.   This is a dictionary: {{{ {'value1' => 'abc', 'value2' => 'def', 'value3' => 'ghj'} }}}.  A dictionary is a collection of key value pairs;  in our example key "value2" has value "def".  In PHP an array isn't an array, it is a dictionary.  If you don't specify the keys then PHP just uses the index as the key.  So {{{ {'abc', 'def', 'ghj'} }}} == {{{ {'0' => 'abc', '1' => 'def', '2' => 'ghj'} }}}.  I don't know, or care, how PHP implements this internally;  but this lack of distinction between array, dictionary, and structure can cause a bit of confustion when using RPC services from PHP.
+
+PHP developers should keep in mind the distinction between an array and a dictionary when reading zOGI documentation.  Most of the provided examples are written in Python.  In Python curly braces indicate a dictionary, and a variable must be declared as a dictionary before key value pairs can be assigned, like:
+{{{
+dictionary = { }
+dictionary['value1'] = 'abc'
+}}}
+An array in Python is declared in square brackets like:
+{{{
+query = [ criteria1, criteria2 ]
+}}}
+In this example the variable query is an array of two elements: criteria1 and criteria2.  Variables in Python are not prefixed by a dollar sign.
+
+= Using the zOGI Wrapper =
+
+== Signing on to the server ==
+
+In order to "sign on" to the OpenGroupware server simply create an OpenGroupwareServer object.  The URL to contact ZideStore will be constructed automatically.  If you use a non-standard alias/location for ZideStore you will have to modify the zogi.php/zogi+memcache.php code.
+{{{
+$ogo = new OpenGroupwareServer($hostname, $username, $password);
+}}}
+The above will use the url "http://$hostname/zidestore/so/$username" when communicating with the server.
+
+ZideStore is state-less.  There is no relation between multiple/subsequent requests; there is no "session".   If you need to test whether you can successfully communicate with the server use the *getLoginAccountId()* method.  This will return the objectId of the user's account entity;  or zero if the zogi class was unable to acquire the account entity.   When you create the zogi object it automatically attempts to retrieve a copy of the user's account entity (the method *getLoginAccount(0)* is invoked in the constructor,  the result is cached as "$account").  Calls to *getLoginAccountId()* return the "objectId" value of cached account entity.  
+
+== Enabling & Using MemCache Support ==
+
+  * Information on memcached is available at http://www.danga.com/memcached/
+
+If you provide a dictionary as the fifth parameter of the constructor of the OpenGroupwareServer object specifying a "cacheHost" and "cachePort" the get and put operations will then attempt to use the specified memcache daemon before contacting the [ZideStore] daemon.  This provides improved performance and reduces server load.
+{{{
+   $ogo = new OpenGroupwareServer($_hostname, $_username, $_secret, $_port = 80, 
+                                  array("cacheHost" => "localhost", 
+                                        "cachePort" => "11211"));
+}}}
+If no fifth parameter is provided then cache support is disabled; and all calls will be made directly to the server.
+
+  The *getObjects* and *getObject* method support a third parameter in the zogi+memcache class;  this controls if the object will attempt to use the cache.  The value defaults to true, so if the cache is enabled it will be scanned for the object being requested.  Objects are stored in memcache with a key of _{accountId}:{objectId}_ so each user accessing the application maintains a separate cache of objects.  This is for security reasons as users may have differing levels of access to data.
+
+  Whenever an object is received from the server it is placed in the cache replacing any pre-existing copy of the object.
+
+=== Cached Searches ===
+
+A PHP application can request that the zogi+memcache wrapper remember entire searches.  In order to save a search a name must be applied to the search.  Specification of a search name is via the *L:searchName* flag to *searchForObjects*.  The value of the attribute is the search's name.  By default searches are not named, and accordingly not cached.
+
+To enumerate cached searches use the *listCachedSearches()* method.  This method will return an dictionary whose key is the name of the cached searches and the value is a dictionary describing the search:
+  * *COUNT* - The number of objects in the query.
+  * *CRITERIA* - The criteria of the original query, the second parameter of the original *searchForObjects* call.
+  * *ENTITY* - The type of objects in the query, the first parameter of the original *searchForObjects* call.
+  * *TIMESTAMP* - The timestamp, as epoch time, of the original query or the last time the search was requested by the user.  This can be used to present the user with the most recently used searches.
+
+Retrieval of a cached search is performed by calling the *searchForObjects* method with a criteria, as a string, of *L:_searchName_*.  If the specified search is not in the list of cached searches then an empty result set is returned.  If the search is known then the contents are returned.  If some of the contents of the search have expired from the cache then an attempt is made to retrieve expired contents from the server (via an automatic call to *getObjects*).
+
+=== Cache Coherency ===
+
+When a *putObject* or *deleteObject* call is performed the specified object is first flushed from the cache, along with any objects which the object references.  This will force those objects to be refreshed from the server if the application requests them;  this is important as objects may reference each other bi-directionally.
+
+However, if a reference was removed from the object and a putObject was performed, the zogi class has no way of notifying referencing objects of the change.  For example: if an [assignment] is removed from the *ENTERPRISES* key of a [Contact] and the [Contact] is updated to the server via *putObject* and the referred to [Enterprise] is also in the cache it will contains a now invalid [assignment] connecting the [Contact] to the [Enterprise].  So when unlinking related objects it is the client applications responsibility to refresh those related objects.  In many cases this can be accomplished simply by calling *getObject* / *getObjects* with the *useCache* parameter set to *false*.
+
+  * Automatic cache coherency is maintained by via the private "rippleCache" method which is called by the *putObject* and *deleteObject* methods.
+
+== The getSubkeyReference method ==
+
+The getSubkeyReference method is provided for retrieving a specific dictionary from an array keys such as *COMPANYVALUES* or *PROPERTIES*. The parameters are:
+ * The first parameter is the parent entity dictionary.
+ * The second parameter is the array key of the entity dictionary.
+ * The third parameter is the key of the dictionary to search.
+ * The fourth parameter is the value to match.
+So - 
+{{{
+$cv = &$ogo->getSubkeyReference($enterprise, '_COMPANYVALUES', 'attribute', 'division');
+}}}
+ - will search the enterprise entities *COMPANYVALUES* array for the key "attribute" with a value of "division".  This function should always be called with the "&" symbol as a prefix in order to ensure that a reference of the dictionary is received and not a copy,  in this way a change to the dictionary received changes the enterprise.  (Unfortunately the operation of reference vs. copy in PHP is quite confusing.)
+
+*NOTE:* PHP is buggy!  Using a function that returns a reference (with the "&" prefix) in some situations will crash PHP.  It has been demonstrated that:
+{{{
+for ($enterprises as $e) {
+  $a = array('name' => $e['name'],
+             'location' => &$ogo->getSubkeyReference($e, '_ADDRESSES', 'type' 'location'));
+ }
+}}} 
+ - will crash PHP.
+
+But the following works:
+{{{
+for ($enterprises as $e) {
+  $l = &$ogo->getSubkeyReference($e, '_ADDRESSES', 'type' 'location');
+  $a = array('name' => $['name'],
+             'location' => &$l);
+ }
+}}}
+
+== Methods ==
+
+ * getLoginAccount($detail)
+   * Invokes the [getLoginAccount] method.  This method is called in the constructor of the OpenGroupwareServer object.
+ * getLoginAccountId()
+   * Returns the objectId of the cached account object.  This will be 0 if communication with the server failed the last time getLoginAccount was called.
+ * getObject($objectId, $detail, $useCache)
+   * Invokes the [getObjectById] method.
+ * getObjects($objectIds, $detail, $useCache)
+   * Invokes the [getObjectById] method.
+ * putObject($object, $flags = '')
+   * Invokes the [putObject] method.
+ * deleteObject($object, $flags = '')
+   * Invokes the [deleteObject] method.
+ * searchForObjects($entityName, $criteria, $detail = 0, $flags = array())
+   * Invokes the [searchForObjects] method.
+ * getFavoritesByType($entityName, $detail = 0)
+   * Invokes the [getFavoritesByType] method.
+ * flagFavorites($favIds)
+   * Invokes the [flagFavorites] method.
+ * unflagFavorites($favIds)
+   * Invokes the [unflagFavorites] method.
+ * listCachedSearches()
+   * Returns an array of cached searches.  This features is only available in the zogi+memcache edition of the zOGI wrapper class.
+
+== Example ==
+{{{
+<?PHP
+
+  require_once("zogi.php");
+
+  if (isset($_POST["username"]))
+  {
+    $ogo = new OpenGroupwareServer(
+                 "tor", 
+                 $_POST["username"], 
+                 $_POST["password"]);
+    $accountId = @$ogo->getLoginAccountId();
+    if ($accountId == null)
+    {
+      print 'Cannot connect to groupware using provided credentials';
+      die(0);
+    }
+    print 'Retrieving enterprise...<br/>';
+    $enterprise = $ogo->getObject(3049570, 32767);
+    printf('Name: %s<br/>', $enterprise['name']);
+
+    /* Change the division, this demonstrates using getSubkeyReference 
+       A reference to the dictionary (keyed array) in _COMPANYVALUES
+       with an "attribute" equal to "division" is returned.  Then its
+       other components can be modified. */
+    $cv = &$ogo->getSubkeyReference($enterprise, '_COMPANYVALUES', 'attribute', 'division');
+    printf('Division: %s<br/>', $cv['value']);
+    $cv['value'] = 'Test';
+    $enterprise = $ogo->putObject($enterprise);
+    $cv = &$ogo->getSubkeyReference($enterprise, '_COMPANYVALUES', 'attribute', 'division');
+    printf('Division: %s<br/>', $cv['value']);
+    $cv['value'] = 'MVP';
+    $enterprise = $ogo->putObject($enterprise);
+    $cv = &$ogo->getSubkeyReference($enterprise, '_COMPANYVALUES', 'attribute', 'division');
+    printf('Division: %s<br/>', $cv['value']);
+
+    /* Display the city from the ship address */
+    $ship = &$ogo->getSubkeyReference($enterprise, '_ADDRESSES', 'type', 'ship');
+    printf('City: %s<br/>', $ship['city']);
+  } else
+     {
+       print '<FORM METHOD="POST" ACTION="zogiEnt.php">';
+       print '</U>Provide username and password</U><BR/>';
+       print 'Username: <INPUT SIZE=10 NAME="username"/><BR/>';
+       print 'Password: <INPUT SIZE=10 NAME="password"/><BR/>';
+       print '<INPUT TYPE="SUBMIT" VALUE="Login"/>';
+       print '</FORM>';
+     }
+
+?>
+}}}
+
+[http://code.google.com/p/zogi/ Home]

@@ -1,0 +1,124 @@
+#summary The Project entity
+
+= Attributes =
+
+ * *endDate* - If not provided when creating or updating a project this value will default to "2032-12-31 18:59". If a provided value cannot be transformed into a date while attempting to create or update a project a "Invalid end date specified for project" exception will occur.
+ * *folderObjectId* - This value is read-only.  It indicates the objectId of the root folder of the project;  to enumerate the [Folder] hierarchy and files contained within the project begin with this [Folder].
+ * *name* - This is a required field.  It must always be provided when creating or updating a project.
+ * *number* - This is a *unique* string which identifies the project.  If a number is not provided when creating a project this value will default to the objectId of the project with a prefix of "P".  So if the id assigned to a new project is 1247800, the default project number will be "P1247800".
+ * *ownerObjectId* - If not provided when creating or updating a project this value will default to the id of the current user.
+ * *placeHolder* - This value indicates if the project is "fake".  "Fake" projects do not appear in the web interface,  they cannot be searched for in the project application.  Set "placeHolder" to a value of 1 if the project is meant to be used as a backend container for a specific application.
+ * *startDate* - If not provided when creating or updating a project this value defaults to the current time.  If a provided value cannot be transformed into a date while attempting to create or update a project a "Invalid start date specified for project" exception will occur.
+
+The "CONTACTS", "ENTERPRISES", and "PARTICIPANTS" keys each contain an array of [assignment] entities.  The "PARTICIPANTS" contains both the [Team]s and [Account]s which are attached to the project;  and in this case the "accessRight" field of the [assignment] entity will have relevant data.  Since neither "CONTACTS" nor "ENTERPRISES" represent objects which have actual access to the project the "accessRight" attribute of the [assignment] entity will always be empty within those keys.
+
+= Example =
+
+{{{
+{'_CONTACTS': [{'accessRight': '',
+                'entityName': 'assignment',
+                'info': '',
+                'objectId': 479370,
+                'sourceEntityname': 'Project',
+                'sourceObjectId': 479340,
+                'targetEntityName': 'Contact',
+                'targetObjectId': 306970},
+               {'accessRight': '',
+                'entityName': 'assignment',
+                'info': '',
+                'objectId': 479380,
+                'sourceEntityname': 'Project',
+                'sourceObjectId': 479340,
+                'targetEntityName': 'Contact',
+                'targetObjectId': 330990}],
+ '_ENTERPRISES': [{'accessRight': '',
+                   'entityName': 'assignment',
+                   'info': '',
+                   'objectId': 479480,
+                   'sourceEntityname': 'Project',
+                   'sourceObjectId': 479340,
+                   'targetEntityName': 'Enterprise',
+                   'targetObjectId': 373790}],
+ '_LOGS': [],
+ '_NOTES': [{'appointmentObjectId': '',
+             'content': 'Created in webui',
+             'createdTime': <DateTime '20070214T19:38:52' at b7964fac>,
+             'creatorObjectId': 10160,
+             'entityName': 'Note',
+             'objectId': 479490,
+             'ownerObjectId': 10160,
+             'projectObjectId': 479340,
+             'title': 'Project Notation'}],
+ '_OBJECTLINKS': [{'direction': 'from',
+                   'entityName': 'objectLink',
+                   'label': 'OGo222320',
+                   'objectId': '479500',
+                   'targetEntityName': 'Enterprise',
+                   'targetObjectId': '222320',
+                   'type': 'generic'}],
+ '_PARTICIPANTS': [{'accessRight': 'drwm',
+                    'entityName': 'assignment',
+                    'info': '',
+                    'objectId': 479400,
+                    'sourceEntityname': 'Project',
+                    'sourceObjectId': 479340,
+                    'targetEntityName': 'Team',
+                    'targetObjectId': 10003},
+                   {'accessRight': 'iw',
+                    'entityName': 'assignment',
+                    'info': '',
+                    'objectId': 479390,
+                    'sourceEntityname': 'Project',
+                    'sourceObjectId': 479340,
+                    'targetEntityName': 'Contact',
+                    'targetObjectId': 10160}],
+ '_PROPERTIES': [],
+ '_TASKS': [{'accountingInfo': '',
+             'actualWork': 0,
+             'associatedCompanies': '',
+             'associatedContacts': '',
+             'category': '',
+             'comment': 'Comment of task',
+             'completionDate': '',
+             'creatorObjectId': 10160,
+             'end': <DateTime '20070222T04:59:59' at b796b5cc>,
+             'entityName': 'Task',
+             'executantObjectId': 10003,
+             'isTeamJob': 1,
+             'keywords': '',
+             'kilometers': '',
+             'kind': '',
+             'lastModified': '',
+             'name': 'Task In Project',
+             'notify': 0,
+             'objectId': 479440,
+             'objectProjectId': 479340,
+             'percentComplete': 20,
+             'priority': 5,
+             'sensitivity': 1,
+             'start': <DateTime '20070214T05:00:00' at b796b54c>,
+             'status': '00_created',
+             'timerDate': '',
+             'totalWork': 0,
+             'version': ''}],
+ 'comment': 'Update project comment',
+ 'endDate': <DateTime '20321231T18:59:00' at b796b34c>,
+ 'entityName': 'Project',
+ 'folderObjectId': 479360,
+ 'kind': '',
+ 'name': 'Updated project name',
+ 'number': 'P479340',
+ 'objectId': 479340,
+ 'ownerObjectId': 10160,
+ 'placeHolder': 0,
+ 'startDate': <DateTime '20070213T05:00:00' at b7964e0c>,
+ 'status': '',
+ 'version': ''}
+}}}
+
+= Changes =
+ * *r272* added the "comment" key which contains the comment associated with the project.  As of this version basic project creation and update are working (with minimal testing).  Saving of subkeys is not supported yet.
+ * *r276* added the "startDate" and "endDate" attributes.
+ * *r283* changed format of "assignment" entity,  which isn't document yet anyway.  Added support for "PARTICIPANT" key;  "PARTICIPANT" contains the teams and accounts with access to the project.
+
+[http://code.google.com/p/zogi/ Home]

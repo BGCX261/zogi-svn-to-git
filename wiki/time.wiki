@@ -1,0 +1,30 @@
+#summary The time entity
+
+The [time] entity is used to represent the current time of the server.  Clients can use this value to check that their own local clocks are a reasonable match to the servers time or to discover their current difference from GMT time.   If the user has configured a time zone on the server the server will also provide, via the *userTime*, *isDST*, and *offset* attributes, its perception of the  clients current time.  If the user has not configured a time zone the *userTime* and offset attributes will be zero as the server will assume the client is operating in GMT time.
+
+To retrieve the current [time] entity perform a [searchForObjects] with an entity name of "Time".  The detail, flags, and criteria fields are ignored for a [time] request.  The result will be an array of a single [time] entity.
+
+*NOTE:* [time] is a [UnderstandingEntities transient entity].
+
+For retrieving the time zones known to the server see the documentation on the [timeZone] entity.
+
+= Example =
+
+{{{
+  #!/usr/bin/env python
+  import xmlrpclib, time, pprint
+
+  server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+  pprint.pprint(server.zogi.searchForObjects('Time', '', 0))
+}}}
+
+{{{
+[{'entityName': 'time',
+  'gmtTime': <DateTime '20071110T16:41:15' at b7ad714c>,
+  'isDST': 0,
+  'offsetFromGMT': -18000,
+  'offsetTimeZone': 'EST',
+  'userTime': <DateTime '20071110T11:41:15' at b7ad706c>}]
+}}}
+
+[http://code.google.com/p/zogi/ Home]

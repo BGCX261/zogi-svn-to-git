@@ -1,0 +1,166 @@
+{
+  requires = ( ZSCommon );
+
+  publicResources = (
+  );
+
+  factories = {
+  };
+
+  classes = {
+  };
+  
+  categories = {
+    SxFolder = {
+      methods = {
+      /* Generics */
+      "zogi.getTypeOfObject" = {
+        protectedBy = "View";
+        actionClass = "zOGIGenericAction";
+        actionName = "getTypeOfObject";
+        arguments = { positionalKeys = ( arg1 ); };
+       };
+      "zogi.getObjectsById" = {
+        protectedBy = "View";
+        actionClass = "zOGIGenericAction";
+        actionName = "getObjectsByObjectId";
+        arguments = { positionalKeys = ( arg1, arg2 ); };
+       };
+      "zogi.getObjectById" = {
+        protectedBy = "View";
+        actionClass = "zOGIGenericAction";
+        actionName = "getObjectByObjectId";
+        arguments = { positionalKeys = ( arg1, arg2 ); };
+       };
+      "zogi.putObject" = {
+        protectedBy = "View";
+        actionClass = "zOGIGenericAction";
+        actionName = "putObject";
+        arguments = { positionalKeys = ( arg1 ); };
+       };
+      "zogi.getObjectVersionsById" = {
+        protectedBy = "View";
+        actionClass = "zOGIGenericAction";
+        actionName = "getObjectVersionsByObjectId";
+        arguments = { positionalKeys = ( arg1 ); };
+       };
+      "zogi.searchForObjects" = {
+        protectedBy = "View";
+        actionClass = "zOGIGenericAction";
+        actionName = "searchForObjects";
+        arguments = { positionalKeys = ( arg1, arg2, arg3 ); };
+       };
+      "zogi.flagFavorites" = {
+        protectedBy = "View";
+        actionClass = "zOGIGenericAction";
+        actionName = "flagFavorites";
+        arguments = { positionalKeys = ( arg1 ); };
+       };
+      "zogi.unflagFavorites" = {
+        protectedBy = "View";
+        actionClass = "zOGIGenericAction";
+        actionName = "unflagFavorites";
+        arguments = { positionalKeys = ( arg1 ); };
+       };
+      "zogi.getACLsForObjectId" = {
+        protectedBy = "View";
+        actionClass = "zOGIACLAction";
+        actionName = "getACLsForObjectId";
+        arguments = { positionalKeys = ( arg1 ); };
+       };
+      /* Schedular */
+      "zogi.getAppointmentsById" = {
+        protectedBy = "View";
+        actionClass = "zOGISchedularAction";
+        actionName = "getAppointmentsByObjectId";
+        arguments = { positionalKeys = ( arg1, arg2 ); };
+       };
+      "zogi.getConflictsById" = {
+        protectedBy = "View";
+        actionClass = "zOGISchedularAction";
+        actionName = "getConflictsByObjectId";
+        arguments = { positionalKeys = ( arg1 ); };
+       };
+      /* Resources */
+      "zogi.getResourcesById" = {
+        protectedBy = "View";
+        actionClass = "zOGIResourceAction";
+        actionName = "getResourcesByObjectId";
+        arguments = { positionalKeys = ( arg1, arg2 ); };
+       };
+      /* Contacts */
+      "zogi.getContactsById" = {
+        protectedBy = "View";
+        actionClass = "zOGIContactAction";
+        actionName = "getContactsByObjectId";
+        arguments = { positionalKeys = ( arg1, arg2); };
+       };
+      "zogi.getFavoriteContacts" = {
+        protectedBy = "View";
+        actionClass = "zOGIContactAction";
+        actionName = "getFavoriteContacts";
+        arguments = { positionalKeys = ( arg1 ); };
+       };
+      /* Enterprises */
+      "zogi.getEnterprisesById" = {
+        protectedBy = "View";
+        actionClass = "zOGIEnterpriseAction";
+        actionName = "getEnterprisesByObjectId";
+        arguments = { positionalKeys = ( arg1, arg2 ); };
+       };
+      "zogi.getFavoriteEnterprises" = {
+        protectedBy = "View";
+        actionClass = "zOGIEnterpriseAction";
+        actionName = "getFavoriteEnterprises";
+        arguments = { positionalKeys = ( arg1 ); };
+       };
+      /* Project */
+      "zogi.getProjectsById" = {
+        protectedBy = "View";
+        actionClass = "zOGIProjectAction";
+        actionName = "getProjectsByObjectId";
+        arguments = { positionalKeys = ( arg1, arg2 ); };
+       };
+      "zogi.getFavoriteProjects" = {
+        protectedBy = "View";
+        actionClass = "zOGIProjectAction";
+        actionName = "getFavoriteProjects";
+        arguments = { positionalKeys = ( arg1 ); };
+       };
+      /* Task */
+      "zogi.getTasksById" = {
+        protectedBy = "View";
+        actionClass = "zOGITaskAction";
+        actionName = "getTasksByObjectId";
+        arguments = { positionalKeys = ( arg1, arg2 ); };
+       };
+      "zogi.getTasksByList" = {
+        protectedBy = "View";
+        actionClass = "zOGITaskAction";
+        actionName = "getTasksByList";
+        arguments = { positionalKeys = ( arg1, arg2 ); };
+       };
+      "zogi.putTaskNotation" = {
+        protectedBy = "View";
+        actionClass = "zOGITaskAction";
+        actionName = "putTaskNotation";
+        arguments = { positionalKeys = ( arg1, arg2, arg3 ); };
+       };
+      /* Team */
+      "zogi.getTeamsById" = {
+        protectedBy = "View";
+        actionClass = "zOGITeamAction";
+        actionName = "getTeamsByObjectId";
+        arguments = { positionalKeys = ( arg1, arg2 ); };
+       };
+      /* Account */
+      "zogi.getLoginAccount" = {
+        protectedBy = "View";
+        actionClass = "zOGIAccountAction";
+        actionName = "getLoginAccount";
+        arguments = { positionalKeys = ( arg1 ); };
+       };
+      };
+    };
+  };
+}

@@ -1,0 +1,20 @@
+{
+  '_OBJECTLINKS': [
+    {'direction': 'from', 
+     'objectId': '31430', 
+     'entityName': 'ObjectLink', 
+     'targetEntityName': 'Enterprise', 
+     'targetObjectId': '20590', 
+     'label': ' OGo20590', 
+     'type': 'generic'}
+   ], 
+  'objectId': 10120, 
+  'entityName': 'Account', 
+  '_LOGS': [
+    {'actionDate': <DateTime u'20060630T15:31:10' at -484c9194>, 'objectId': 1 0240, 'entityName': 'logEntry', 'action': '00_created', 'message': 'Company crea ted', 'actorObjectId': 10000}, 
+   ...
+   ], 
+  'version': 4, 
+  '_PROPERTIES': [], 
+  'login': 'awilliam'
+}

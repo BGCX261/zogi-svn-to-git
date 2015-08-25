@@ -1,0 +1,33 @@
+#summary The appointmentConflict Entity
+
+The [appointmentConflict] entity appears in the CONFLICTS key of [Appointment] entities if a detail level including zOGI_INCLUDE_CONFLICTS (64) is specified.  The presence of these entities indicates that one or more objects in conflict between the appointment and one or more other appointments.
+
+Support for this feature was added in r374 (2007-06-04)
+
+= Example =
+
+{{{
+{'appointmentObjectId': '496315',
+ 'conflictingEntityName': 'Contact',
+ 'conflictingObjectId': 10003,
+ 'entityName': 'appointmentConflict',
+ 'status': ''}
+}}}
+
+{{{
+{'appointmentObjectId': '496315',
+ 'conflictingEntityName': 'Resource',
+ 'conflictingObjectId': 470730,
+ 'entityName': 'appointmentConflict',
+ 'status': 'ACCEPTED'}
+}}}
+
+{{{
+{'appointmentObjectId': '496450',
+ 'conflictingEntityName': 'Team',
+ 'conflictingObjectId': 10160,
+ 'entityName': 'appointmentConflict',
+ 'status': ''}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

@@ -1,0 +1,18 @@
+#summary The companyValue entity
+
+[companyValue] entities are second class entities that occur in the COMPANYVALUES key of [Contact] and [Enterprise] entities.
+
+= Example =
+
+{{{
+{'attribute': 'accepts_email',
+ 'companyObjectId': 10120,
+ 'entityName': 'companyValue',
+ 'label': 'E-Mail Solicitation',
+ 'objectId': 121290,
+ 'type': 2,
+ 'uid': '',
+ 'value': 'YES'}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

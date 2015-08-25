@@ -1,0 +1,34 @@
+#summary The ParticipantStatus entity
+
+The [ParticipantStatus] entity is a *write only* entity, and is used by the user to change their participant status on an [Appointment].
+
+_Keys_
+ * *comment* - A short comment, up to 255 characters, regarding the users participation and/or attendance.  This value is optional,  if no value is provided the value will remain unchanged.
+ * *objectId* - The objectId of the appointment for which the user is adjusting their participation status.  This attribute is mandatory.
+ * *rsvp* - Either a 0 indicating no or a 1 indicating yes.  The "rsvp" field is an indicator to the meeting organizer that the user wishes further contact or information regarding the appointment.  This attribute is optional,  if no value is provided the value will remain unchanged.
+ * *status* - The user's attendance status: "NEEDS-ACTION", "ACCEPTED", "DECLINED", "TENTATIVE",  or "DELEGATED".  This attribute is optional,  but if no value is provided the status will be reset to "NEEDS-ACTION".  The meaning of the various statuses is documented with the [participant] entity.
+
+The result of the [putObject] is the [Appointment] specified with the *objectId* attribute.  The client should use this to refresh its copy of the [Appointment] in order to reflect the changes to [participant] status.
+
+= Example =
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib,pprint
+server = xmlrpclib.Server('http://{USERNAME}:{PASSWORD}@{HOSTNAME}/zidestore/so/{USERNAME}/')
+pprint.pprint(server.zogi.getObjectById(10621, 4))
+status = { }
+status['comment'] = 'My very very very very long comment'
+status['objectId'] = 10621
+status['rsvp'] = 1
+status['status'] = 'TENTATIVE'
+status['entityName'] = 'ParticipantStatus'
+pprint.pprint(server.zogi.putObject(status))
+pprint.pprint(server.zogi.getObjectById(10621, 4))
+status['status'] = 'accepted'
+status['rsvp'] = 0
+pprint.pprint(server.zogi.putObject(status))
+pprint.pprint(server.zogi.getObjectById(10621, 4))
+}}}
+
+[http://code.google.com/p/zogi/ Home]

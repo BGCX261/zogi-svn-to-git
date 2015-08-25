@@ -1,0 +1,7 @@
+#summary What is ZideStore
+
+[ZideStore] is a component of the [OpenGroupware] groupware server.  [ZideStore] provides an integration oriented middleware solution allowing clients using multiple protocols to utilize the collaboration functionality of [OpenGroupware].  Functionality can be added to [ZideStore] via "bundles".  [http://code.google.com/p/zogi/ zOGI] is such a bundle.
+
+The [http://www.opengroupware.org/en/projects/zidestore/index.html ZideStore page] at the [http://www.opengroupware.org OpenGroupware.org project].
+
+[http://code.google.com/p/zogi/ Home]

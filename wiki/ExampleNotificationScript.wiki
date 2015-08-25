@@ -1,0 +1,85 @@
+#summary An example notification script
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib, time, pprint, datetime, smtplib
+
+# not needed in python >= 2.5 because it has a strptime function, but
+# this should work in any version
+def getDT(strISO):
+	return datetime.datetime(int(strISO[0:4]),int(strISO[4:6]),int(strISO[6:8]),int(strISO[9:11]),int(strISO[12:14]),int(strISO[15:17]))
+
+#-------------------------
+# Configuration
+
+# address the e-mail will appear from (I use OGo superuser):
+fromaddr = "[from address for notification emails]" 
+# prefix of the reminder e-mail (the title of the appointment is appended):
+subjectprefix = "Appointment Reminder: "        
+# prefix for the link, the appointment objectId gets appended to it,
+# most commonly is http://[ogosite]/OpenGroupware/x/activate?oid=
+linkprefix = "http://[ogosite]/OpenGroupware/x/activat?oid="
+# zidestore http with login info (replace PASSWD and both instances of USER 
+#  with super user account)
+zidestoreurl = 'http://[USER]:[PASSWD]@[ogosite]/zidestore/so/[USER]/'
+# this is the date/time format for the start/end times in the e-mail:
+emailTimeFormat = "%A, %Y-%m-%d %I:%M %p"
+# the SMTP host to send e-mail through:
+smtpHost = "localhost"
+
+# End Configuration
+#--------------------------
+
+gmtTime = datetime.datetime.utcnow()
+startTime = gmtTime - datetime.timedelta(minutes=10)
+endTime = gmtTime + datetime.timedelta(days=9)
+
+timeFormat = "%Y-%m-%d %H:%M"
+
+strStart = startTime.strftime(timeFormat)
+strEnd = endTime.strftime(timeFormat)
+
+server = xmlrpclib.Server(zidestoreurl)
+result = server.zogi.getNotifications(strStart,strEnd)
+
+for notif in result:
+	try:
+  	   print "sending appointment %s to %s\n" % (notif['appointmentObjectId'],notif['email'])
+
+	   appt = server.zogi.getObjectById(notif['appointmentObjectId'])
+
+	   startValue = appt['start'].value
+	   endValue = appt['end'].value
+	   startOffset = appt['startOffset']
+	   endOffset = appt['endOffset']
+	   apptStart = getDT(startValue) + datetime.timedelta(seconds=startOffset)
+	   apptEnd = getDT(endValue) + datetime.timedelta(seconds=endOffset)
+
+	   body = "\r\nAppointment Reminder\r\n\r\n"
+	   body = body + ("Title   : %s\r\n" % appt['title'])
+	   body = body + ("Start   : %s (%s)\r\n" 
+			% (apptStart.strftime(emailTimeFormat), appt['offsetTimeZone'].strip()))
+	   body = body + ("End     : %s (%s)\r\n" 
+			% (apptEnd.strftime(emailTimeFormat), appt['offsetTimeZone'].strip()))
+	   body = body + ("Location: %s\r\n" % appt['location'])
+	   body = body + ("Comment : %s\r\n" % appt['comment'])
+	
+	   body = body + "\r\n"
+ 	   body = body + ("Link: %s%s\r\n" 
+			% (linkprefix, notif['appointmentObjectId']))
+	   body = body + "\r\n"
+	
+	   # ----------------------------------------------
+	   # emailing:
+	   msg = ("From: %s\r\nTo: %s\r\nSubject: %s %s\r\n\r\n"
+	         % (fromaddr, ", ".join(notif['email']), subjectprefix, appt['title']))
+	   msg = msg + body
+	   smtpserver = smtplib.SMTP(smtpHost)
+	   #smtpserver.set_debuglevel(1)
+	   smtpserver.sendmail(fromaddr, notif['email'], msg)
+	   smtpserver.quit()
+	   # ----------------------------------------------
+	except:
+	   print 'error %s:\n' % sys.exc_info()[0]
+	   pprint.pprint(notif)
+}}}

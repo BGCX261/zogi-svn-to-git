@@ -1,0 +1,99 @@
+#summary The getLoginAccount method
+
+The getLoginAccount method returns information about the currently authenticated account (probably you, the user).  
+  *  The default behavior of [getLoginAccount] is to return the [Account] entity corresponding to the current user; however, if the zOGI_INCLUDE_CONTACTS detail level is specified the corresponding [Contact] entity will be returned.  
+    * Support for optionally returning a [Contact] entity was added in r879 of zOGI and r2062 of [ZideStore]
+  * As of zOGI r701 (2007-10-08) the results of [getLoginAccount] contains a "DEFAULTS" key which contains the users [defaults] entity.  
+    * This entity is transient, see [UnderstandingEntities Understanding Entities] for an explanation of transient entities.  
+    * See the documentation of the [defaults] entity for detailed documentation.
+
+= Example =
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/awilliam/')
+print server.zogi.getLoginAccount(65535)
+}}}
+
+== Result ==
+
+{{{
+{'_DEFAULTS': {'accountObjectId': 10100,
+               'calendarPanelObjectIds': ['180790',
+                                          '1112560',
+                                          '195180',
+                                          '1195580',
+                                          '830020',
+                                          '970990',
+                                          '11530'],
+               'entityName': 'defaults',
+               'notificationCC': '******************',
+               'isDST': 1,
+               'secondsFromGMT': -14400,
+               'timeZone': 'EDT',
+               'timeZoneName': 'US/Eastern'},
+
+ '_OBJECTLINKS': [], 
+ 'objectId': 10120, 
+ 'entityName': 'Account', 
+ 'version': 7, 
+ '_PROPERTIES': [], 
+ 'login': 'awilliam'}
+}}}
+
+
+If requested with a detail level of 128 zOGI_INCLUDE_MEMBERSHIP then *TEAMS* key will contains the [Team] entities that the account is a member of rendered at the same detail level.
+{{{
+{'_DEFAULTS': {'accountObjectId': 10100,
+               'calendarPanelObjectIds': ['180790',
+                                          '1112560',
+                                          '195180',
+                                          '1195580',
+                                          '830020',
+                                          '970990',
+                                          '11530'],
+               'entityName': 'defaults',
+               'isDST': 1,
+               'secondsFromGMT': -14400,
+               'notificationCC': '****************',
+               'timeZone': 'EDT',
+               'timeZoneName': 'US/Eastern'},
+ '_TEAMS': [{'entityName': 'Team',
+             'memberObjectIds': [10100, 9144860, 195180, 1130160, 54720],
+             'name': 'MVP (Parts QC)',
+             'objectId': 55000,
+             'objectVersion': 7,
+             'ownerObjectId': 10000},
+            {'entityName': 'Team',
+             'memberObjectIds': [11120, 10100, 9144860, 195180, 26850],
+             'name': 'OGo (news editors)',
+             'objectId': 9991,
+             'objectVersion': 6,
+             'ownerObjectId': ''},
+            {'entityName': 'Team',
+             'memberObjectIds': [1189570,
+                                 1179090,
+                                 10100,
+                                 1254780,
+                                 1194780,
+                                 828920,
+                                 1071330],
+             'name': 'all intranet',
+             'objectId': 10003,
+             'objectVersion': 4,
+             'ownerObjectId': ''},
+            {'entityName': 'Team',
+             'memberObjectIds': [10100, 9144860, 26850],
+             'name': 'team creators',
+             'objectId': 9981,
+             'objectVersion': 2,
+             'ownerObjectId': 10000}],
+ 'entityName': 'Account',
+ 'login': 'adam',
+ 'objectId': 10100,
+ 'version': 568}
+}}}
+
+
+[http://code.google.com/p/zogi/ Home]

@@ -1,0 +1,116 @@
+    { // <entity name=JournalEntry table=journal>
+      name                 = "JournalEntry";
+      externalName         = "journal";
+      className            = "LSJournalEntry";
+      primaryKeyAttributes = ( "journalEntryId" );
+
+      attributesUsedForLocking = ( journalEntryId );
+      classProperties = (
+        journalEntryId,
+        title,
+        ownerId,
+        creationDate,
+        firstOwnerId,
+        currentOwnerId,
+        modificationDate,
+        entryText,
+        versionCount,
+        type
+      );
+      attributes = (
+        {
+          name           = "creationDate";
+          columnName     = "creation_date";
+          externalType   = "DATE";
+          valueClassName = "NSCalendarDate";
+          allowsNull     = Y;
+          calendarFormat = "%Y-%m-%d %H:%M:%S";
+        },
+        {
+          name           = "modificationDate";
+          columnName     = "modification_date";
+          externalType   = "DATE";
+          valueClassName = "NSCalendarDate";
+          allowsNull     = Y;
+          calendarFormat = "%Y-%m-%d %H:%M:%S";
+        },
+        {
+          name           = "currentOwnerId";
+          columnName     = "current_owner_id";
+          externalType   = "INT";
+          valueClassName = "NSNumber";
+          valueType      = i;
+          allowsNull     = Y;
+        },
+        {
+          name           = "journalEntryId";
+          columnName     = "entry_id";
+          externalType   = "INT";
+          valueClassName = "NSNumber";
+          valueType      = i;
+          allowsNull     = Y;
+        },
+        {
+          name           = "firstOwnerId";
+          columnName     = "first_owner_id";
+          externalType   = "INT";
+          valueClassName = "NSNumber";
+          valueType      = i;
+          allowsNull     = Y;
+        },
+        {
+          name           = "title";
+          columnName     = "title";
+          externalType   = "VARCHAR(255)";
+          valueClassName = "NSString";
+          allowsNull     = Y;
+          width          = 255;
+        },
+        {
+          name           = "versionCount";
+          columnName     = "version_count";
+          externalType   = "INT";
+          valueClassName = "NSNumber";
+          valueType      = i;
+          allowsNull     = Y;
+        },
+        {
+          name           = "entryText";
+          columnName     = "entry_text";
+          externalType   = "VARCHAR(4000)";
+          valueClassName = "NSString";
+          allowsNull     = Y;
+        },
+        {
+          name           = "type";
+          columnName     = "type";
+          externalType   = "VARCHAR(100)";
+          valueClassName = "NSString";
+          allowsNull     = Y;
+          width          = 100;
+        },
+      );
+      relationships = (
+        {
+          name        = "toCurrentOwner";
+          destination = "Staff";
+          joins       = ( {
+            sourceAttribute      = "currentOwnerId";
+            destinationAttribute = "companyId";
+            joinSemantic         = EOInnerJoin;
+            joinOperator         = EOJoinEqualTo;
+          });
+        },
+        {
+          name        = "toFirstOwner";
+          destination = "Staff";
+          joins       = ( {
+            sourceAttribute      = "firstOwnerId";
+            destinationAttribute = "companyId";
+            joinSemantic         = EOInnerJoin;
+            joinOperator         = EOJoinEqualTo;
+          });
+        },
+      }
+    };
+

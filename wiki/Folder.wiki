@@ -1,0 +1,73 @@
+#summary The Folder entity
+
+The Folder entity will contain a *CONTENTS* key only if a detail level of zOGI_INCLUDE_CONTENTS (16384) is specified.  The *CONTENTS* key enumerates each of the objects that exist within the folder;  a folder may contain [File]s and subordinate [Folder]s.
+
+In [OpenGroupware] [Folder]s always exist in the context of a [Project].  The "folderObjectId" of the [Project] entity indicates the root folder of a project.  From the [Folder] the parent of the folder is stored in the "folderObjectId" key,  if this key is empty then the folder is a root folder.  The [Project] that contains the folder is stored in the "projectObjectId" key of each subsequent object.
+
+= Example =
+
+{{{
+{'_CONTENTS': [{'attachment': '/var/lib/opengroupware.org/documents/470630/470000/470760.txt',
+                'creation': <DateTime '20070115T00:01:40' at b79c408c>,
+                'creatorObjectId': 10160,
+                'entityName': 'File',
+                'fileSize': 48,
+                'fileType': 'txt',
+                'filename': 'Test',
+                'folderObjectId': 470650,
+                'lastModified': <DateTime '20070115T00:01:41' at b79c404c>,
+                'objectId': 470760,
+                'ownerObjectId': 10160,
+                'projectObjectId': 470630,
+                'status': 'released',
+                'title': 'Test Document',
+                'version': 2},
+               {'attachment': '/var/lib/opengroupware.org/documents/470630/470000/470800.html',
+                'creation': <DateTime '20070115T01:58:00' at b79c422c>,
+                'creatorObjectId': 10160,
+                'entityName': 'File',
+                'fileSize': 2728,
+                'fileType': 'html',
+                'filename': 'OutlookNotes',
+                'folderObjectId': 470650,
+                'lastModified': <DateTime '20070115T01:58:00' at b79c41ec>,
+                'objectId': 470800,
+                'ownerObjectId': 10160,
+                'projectObjectId': 470630,
+                'status': 'released',
+                'title': 'Notes on using M$-Outlook with OGo',
+                'version': 1},
+               {'attachment': '/var/lib/opengroupware.org/documents/470630/470000/470830.dia',
+                'creation': <DateTime '20070115T01:58:41' at b79c43cc>,
+                'creatorObjectId': 10160,
+                'entityName': 'File',
+                'fileSize': 13204,
+                'fileType': 'dia',
+                'filename': 'NetMap-WAN',
+                'folderObjectId': 470650,
+                'lastModified': <DateTime '20070115T01:58:41' at b79c438c>,
+                'objectId': 470830,
+                'ownerObjectId': 10160,
+                'projectObjectId': 470630,
+                'status': 'released',
+                'title': 'Diagram of corporate WAN',
+                'version': 1},
+               {'creation': <DateTime '20070115T03:03:04' at b79c420c>,
+                'creatorObjectId': 10160,
+                'entityName': 'Folder',
+                'folderObjectId': 470650,
+                'objectId': 470860,
+                'ownerObjectId': 10160,
+                'projectObjectId': 470630,
+                'title': 'Another Folder'}],
+ 'creation': <DateTime '20070113T05:00:00' at b79bdd6c>,
+ 'creatorObjectId': 10160,
+ 'entityName': 'Folder',
+ 'folderObjectId': '',
+ 'objectId': 470650,
+ 'ownerObjectId': 10160,
+ 'projectObjectId': 470630,
+ 'title': 'Test Project'}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

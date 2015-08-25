@@ -1,0 +1,12 @@
+.NET bindings are provided in the Whitemice.ZOGI assembly of the Consonance 
+project.  These bindings can be used without the corresponding application;
+at some point in the future this assembly will be separated into its own
+project.
+
+http://code.google.com/p/consonance/
+http://www.whitemiceconsulting.com/node/35
+http://docs.opengroupware.org/Members/whitemice/consonance/
+
+2007-05-19, Adam Tauno Williams, awilliam@whitemiceconsulting.com
+
+Copyright 2007, Whitemice Consulting

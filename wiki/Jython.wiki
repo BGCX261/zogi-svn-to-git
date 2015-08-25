@@ -1,0 +1,53 @@
+#summary Calling zOGI from Jython
+= Introduction =
+
+== Using the Apache XML-RPC libraries ==
+
+You need to have the following jar files in your CLASSPATH:
+  * xmlrpc-client-3.1.jar
+  * xmlrpc-common-3.1.jar
+  * commons-logging-1.1.jar
+  * ws-commons-util-1.0.2.jar
+
+These are available from the [http://ws.apache.org/xmlrpc/download.html Apache XML-RPC Client Download Page].  General information on the Apache XML-RPC libraries is available, but rather scant, at the [http://ws.apache.org/xmlrpc/xmlrpc2/client.html Client Classes] page.  
+
+_Why is all Java related documentation such crap?_
+
+== Example ==
+
+{{{
+import org.apache.xmlrpc.client as xmlrpc
+from java.util import Vector
+from java.util import Hashtable
+import java.net
+
+client = xmlrpc.XmlRpcClient()
+config = xmlrpc.XmlRpcClientConfigImpl()
+config.setServerURL(java.net.URL('http://***********/zidestore/so/***********/'))
+config.basicUserName = '***********'
+config.basicPassword = '***********'
+client.setConfig(config)
+
+qualifier = Hashtable()
+qualifier['key'] = 'firstname'
+qualifier['conjunction'] = 'AND'
+qualifier['expression'] = 'LIKE'
+qualifier['value'] = 'A%'
+criteria = Vector()
+criteria.add(qualifier)
+
+params = Vector()
+params.add('Contact')
+params.add(criteria)
+params.add(65535)
+results = client.execute("zogi.searchForObjects", params)
+for result in results:
+  print 'ObjectId:%s %s, %s' % (
+    result['objectId'], 
+    result['lastName'],
+    result['firstName'])
+}}}
+
+Other examples are available in the [http://zogi.googlecode.com/svn/trunk/Bindings/Jython/  Bindings/Jython folder] in the subversion repository.
+
+[http://code.google.com/p/zogi/ Home]

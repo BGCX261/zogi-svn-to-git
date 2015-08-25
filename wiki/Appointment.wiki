@@ -1,0 +1,117 @@
+#summary The Appointment entity dictionary
+
+The [Appointment] entity represents an even in the OpenGroupware schedular application.
+
+The PARTICIPANTS special key contains an array of [participant] entities.
+
+The NOTES special key contains an array of [note] entities.
+
+The FLAGS attribute is an array of strings;  these are provided to the client as hints for dealing with the object.  This attribute is read only,  if the application sends the "FLAGS" attribute to the server it will be ignored.
+ * "SELF" - The appointment was created by the user who requested the appointment or performed the modification.
+ * "CYCLIC" - The appointment is cyclical (repeating).
+ * "VISIBLE" - The details of the appointment are available to the requesting user.
+ * "NONVISIBLE" - The details of the appointment are *not* available to the requesting user.
+ * "READONLY" - The requesting user does not have sufficient permissions to modify the appointment.  They should still be able to modify their own attendee status if they are a participant.
+ * "DELETE" - The requesting user has sufficient permissions to delete the appointment.
+ * "WRITE" - The requesting user has sufficient permissions to modify the appointment.
+
+*NOTE:* As of r388 three new attributes are provided: "readAccessTeamObjectId", "writeAccessObjectIds", and "FLAGS".
+
+*NOTE:* As of r379 when encoding a contact as a participant the "lastname" key is now "lastName".  "lastname" was a typo.  If you code expected the previous spelling of the key you may have to update your application.
+
+=== PHP ===
+
+  * Due to bad type management in [PHP]:
+    * To set read access of an appointment to private send either an empty string or a value of zero for "readAccessTeamId".
+    * To clear write access on an appointment send an empty string;  PHP will drop an empty array resulting in no change to the values.
+    * For more information on using [PHP] with zOGI see the [PHP] Wiki page.
+
+== Notification ==
+
+The *notification* attribute is the number of minutes before the start of the appointment that participants will be reminded of the appointment.  
+  * This field must be an integer, standard values are:
+    * 5
+    * 10
+    * 30
+    * 60 (1 hour)
+    * 120 (2 hours)
+    * 360 (6 hours)
+    * 720 (12 hours)
+    * 1440 (1 day)
+    * 2880 (2 days)
+    * 5760 (4 days)
+    * 11520 (8 days)
+  * Storing other values will work but may be incompatible with various other clients such as the web interface and M$-Outlook.
+
+The act of notification is performed either by the "skyaptnotify" tool or by a custom tool  and the [getNotifications] method.
+
+== Participant status, comment, role, & RSVP ==
+
+The details concerning the fields of the [participant] entry are documented on the appropriate Wiki page.  A user can change their own [participant] status using the [ParticipantStatus] entity.
+
+== Conflicts ==
+
+The *CONFLICTS* special key contains an array of [appointmentConflict] entities.  Appointment conflict detection can be disabled for an appointment by setting the *isConflictDisabled* to a value of one.
+
+*NOTE:* Official support for *isConflictDisabled* was added in r779 (2007-11-02).  It could always be set via [putObject] but was not returned in the rendered appointment until r779.
+
+== Resources ==
+
+Resources assigned to an appointment appear in the *RESOURCES* subkey array.  To assign a [Resource] to an appointment via [putObject] include the resource in the *RESOURCES* key when submitting the appointment;  to save the assignment of the [Resource] to the [Appointment] only the "objectId" value is required, other values will be ignored.
+{{{
+print "--To assign resources to an appointment--"
+app['_RESOURCES'] = [ { 'objectId': 465950 }, { 'objectId': 465990 } ]
+app = server.zogi.putObject(app)
+pprint.pprint(app)
+}}}
+
+= Example Of An Appointment Entity =
+
+{{{
+{'FLAGS': ['VISIBLE', 'DELETE', 'WRITE', 'SELF'],
+ '_NOTES': [],
+ '_OBJECTLINKS': [],
+  '_PARTICIPANTS': [{'entityName': 'participant',
+                     'firstName': 'Adam',
+                    'lastname': 'Williams',
+                     'objectId': 11920,
+                    'participantEntityName': 'Contact',
+                    'participantObjectId': 10160,
+                    'role': 'REQ-PARTICIPANT'}],
+ '_PROPERTIES': [],
+ '_RESOURCES': [{'category': 'Rooms',
+                 'email': '',
+                 'emailSubject': '',
+                 'entityName': 'Resource',
+                 'name': 'Grand Rapids South Conference Room',
+                 'notificationTime': 0,
+                 'objectId': 465950},
+                {'category': 'IT Equipment',
+                 'email': 'cisstaff@morrison-ind.com',
+                 'emailSubject': 'OGoResource: Conference Phone',
+                 'entityName': 'Resource',
+                 'name': 'Conference Phone',
+                 'notificationTime': 0,
+                 'objectId': 465990}],
+ 'appointmentType': 'tradeshow',
+ 'comment': '',
+ 'end': <DateTime '20061220T17:00:00' at b79f7cac>,
+ 'entityName': 'Appointment',
+ 'keywords': '',
+ 'notification': 120,
+ 'location': 'Test',
+ 'objectId': 11900,
+ 'ownerObjectId': 10160,
+ 'readAccessTeamObjectId': 11530,
+ 'start': <DateTime '20061220T14:00:00' at b79f7d8c>,
+ 'title': 'Test',
+ 'version': 1,
+ 'postDuration': 50,
+ 'priorDuration': 15,
+ 'isConflictDisabled': 0,
+ 'writeAccessObjectIds': ['11530']}
+}}}
+
+[http://code.google.com/p/zogi/ Home]
+ 
+ 

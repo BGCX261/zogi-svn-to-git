@@ -1,0 +1,51 @@
+#summary The notification entity
+
+= Introduction =
+
+The [notification] entity is a [UnderstandingEntities transient] entity returned from a call to the [getNotifications] method.  Each [notification] entity represents a pending notification; an appointment [notification] will only be received once as once it is returned to the client the [notification] is cleared.
+
+  * Teams are automatically flattened to members.
+  * The *appointmentObjectId* references the [Appointment] appropriate to the notification.
+  * All of a contact's e-mail addresses are provided in the "email" attribute.
+      * This includes the value of the "scheduler_ccForNotificationMails" default if the contact is an account and they have defined a CC: address for notifications in their preferences.
+  * Since notifications are pulled for multiple users in the context of the administrative account the "endOffsetFromGMT", "endTimeZone", "startOffsetFromGMT", and "endTimeZone" attributes are provided so the user can be presented with the expected offset applied to the appointments start and end times.
+    * These values are based on the timezone selected by the user in their preferences.
+      * If the user has not selected a timezone the notification defaults to GMT.
+
+= Example =
+
+{{{
+{'appointmentObjectId': 10499440,
+  'comment': '',
+  'email': ['tschulth@example.com'],
+  'endOffsetFromGMT': 0,
+  'endTimeZone': 'GMT',
+  'entityName': 'notification',
+  'imAddress': '',
+  'isAccount': 1,
+  'notifyEntityName': 'Contact',
+  'notifyObjectId': 1197110,
+  'rsvp': 1,
+  'startOffsetFromGMT': 0,
+  'startTimeZone': 'GMT',
+  'status': 'NEEDS-ACTION',
+  'type': 'Appointment'},
+
+ {'appointmentObjectId': 10499440,
+  'comment': '',
+  'email': ['rhopkins@example.com', 'rick.hopkins@example.com'],
+  'endOffsetFromGMT': -14400,
+  'endTimeZone': 'EDT',
+  'entityName': 'notification',
+  'imAddress': '',
+  'isAccount': 1,
+  'notifyEntityName': 'Contact',
+  'notifyObjectId': 26850,
+  'rsvp': 0,
+  'startOffsetFromGMT': -14400,
+  'startTimeZone': 'EDT',
+  'status': 'NEEDS-ACTION',
+  'type': 'Appointment'},
+}}}
+
+[http://code.google.com/p/zogi/ Home]

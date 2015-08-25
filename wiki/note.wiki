@@ -1,0 +1,22 @@
+#summary The note entity
+
+= Example =
+
+[note] entities exist in the NOTES special key of [Appointment] and [Project] entities.  The NOTES special key of [Task] entities contains [taskNotation] entities, not [note]s.
+
+*NOTE:* As of ZideStore r2102 / zOGI r943 the entityName of the note entity is returned as "note" and not "Note".  Prior to this the Wiki and the code were inconsistent.
+
+{{{
+{'creatorObjectId': 10120, 
+ 'projectObjectId': '', 
+ 'objectId': 31350, 
+ 'appointmentObjectId': 28260, 
+ 'projectObjectId': '',
+ 'title': 'Appointment Note Title', 
+ 'entityName': 'note', 
+ 'ownerObjectId': 10120, 
+ 'content': 'Appointment note text', 
+ 'createdTime': <DateTime u'20060819T23:09:17' at -484d0534>}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

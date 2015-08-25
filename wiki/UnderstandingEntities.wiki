@@ -1,0 +1,45 @@
+#summary Understanding zOGI Entities
+
+= Identification =
+
+  == Proper entities ==
+  *  A "proper" entity is uniquely identified by an "objectId" attribute.  Most zOGI entities are "proper" entities.  These include "Contact", "Enterprise", "Folder", etc...
+  * The *objectId* space is flat;  all entity types share the same sequence.
+    * For example there will never be a [Contact] with an *objectId* of 23,011 and an [Enterprise] with an *objectId* of 23,011.  All first and second class objects, except those lacking an *objectId*, can be safely identified with only the *objectId* value.  
+
+  == Improper entities ==
+  * An "improper" entity is a persistent entity that is not identified by an "objectId".    The following entities are improper:
+    * [objectProperty]
+       * In the case of [objectProperty] the unique identifier of the entity is the "propertyName" string.  
+       * For a detail explanation of the the "propertyName" attribute see the documentation for the [objectProperty] entity.
+    * [acl]
+       * For an [acl] entity the targetObjectId is unique within the context of the entity to which the access rules apply.
+    * [timeZone]
+       * Each [timeZone] is identified by the *abbreviation* attribute.
+
+  == Transient entities ==
+  * Transient entities possess no unique identifier and exist only within the context of a server transaction.  Transient entities should not, as a general rule, be persistently cached by the client application.
+  * The following entities are transient:
+    * [appointmentConflict]
+    * [PluginData]
+    * [ApplicationAlert]
+    * [notification]
+    * [UserAlert]
+    * [ParticipantStatus]
+    * [time]
+
+= First & Second Class Entities =
+
+A *first class* entity has an entityName that starts with a capital letter: [Contact], [Appointment], [Project], etc...  THe key aspect of a *first class* entity is that it is a stand-alone entity; the deletion of another entity will not affect the existence of the entity.  All *first class* entities are *proper* entities (see above). 
+
+A *second class* entity exists within the context of a *first class* entity;  the entity name of a *second class* entity begins with a lower case letter: [objectProperty], [acl], [note], [participant], etc...  The deletion of a *first class* entity may cause some number of *second class* entities to go out of scope.  For instance, the deletion of an [Appointment] entity  will cause the related [participant], [note], [objectProperty], and [objectLink] entities to be invalidated.
+
+= Transformation =
+
+  * zOGI entities do not change type except in one specific instance.
+    * An [acl] entity related to a [Project] can become an [assignment] entity if all access rights to the [Project] are removed from the [Account] but the account's [Contact] remains associated to the [Project].
+    * An [assignment] entity related to a [Project] can become an [acl] entity if access rights to the [Project] are granted to the contact's [Account] and the [Contact] was previously assigned to the [Project] without access rights.
+
+= Assignments = 
+
+[http://code.google.com/p/zogi/ Home]

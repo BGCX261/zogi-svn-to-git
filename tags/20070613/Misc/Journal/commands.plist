@@ -1,0 +1,21 @@
+// $Id$
+{
+  domainList = (
+    "journalentry",
+  );
+
+  domains = {
+    "journalentry" = {
+       operations = {
+        "new"           = { class = "LSNewJournalEntryCommand";      };
+        "set"           = { class = "LSSetJournalEntryCommand";      };
+        "get"           = { class = "LSGetJournalEntryCommand";      };
+        "delete"        = { class = "LSDeleteJournalEntryCommand";   };
+        "get-by-globalid" = { class = "LSGetJournalEntriesForGlobalIDs";  };
+        "extended-search" = {
+          class = "LSExtendedSearchCommand";
+          init  = { entity = "JournalEntry"; 
+        };
+      };
+   };
+}

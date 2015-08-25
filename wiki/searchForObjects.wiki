@@ -1,0 +1,234 @@
+#summary The searchForObjects method.
+
+The [searchForObjects] method is used to retrieve entities from the server based upon some qualifier;  the qualifiers support depend upon the the type of entity being retrieved.  Only one type of entity can be search for at a time.  The first parameter of the method is a primary entity name ([Account], [Appointment], [Contact], [Enterprise], [Project], [Resource], [Task]) identifying the type of entities you are searching for.  The second parameter is the qualification,  this may be a string or an array.  The third parameter specifies the level of detail to be retrieved for each object of the specified type that matches the provided criteria.  
+
+Some server meta-data searches are available by searching for special-purpose entity names;  in these searches the flag, detail, and criteria parameters are ignored.
+  * *TimeZone* - Retrieves [timeZone] entities representing the time zones known to the server.
+  * *Time* - Retrieves a [time] entity representing the servers current clock and its perception of the user's local time based upon their selected time zone. 
+
+= Flags =
+
+As of zOGI r655 / [ZideStore] r2015 (2007-09-19) the [searchForObjects] method accepts a fourth parameter which is a dictionary of values to finness the behavior of the search or the further qualify the search results.
+  * *limit* - Limits the number of objects that will be returned by the [OpenGroupware] Logic commands.  If no flags or no limit is specified the limit is 100,  the same as previous behavior.  Limiting the size of results, especially at high detail levels, is the surest way to improve response time and reduce server load.
+    * As of r655 the "limit" flag is operational only for [Contact] and [Enterprise] searches.
+  * *filter* - The filter flag is a string used to construct an [EOQualifier] which is then used to filter the results of the search before returning then to the client.  It is important to realize that the filter is applied *after* the search is performed and the objects are rendered at the appropriate detail level.  Filtering is the last step before the results are returned to the client.  
+    * Use of the "filter" flag is supported on all entities.
+    * It is the responsibility of the client application to provide a valid filer.
+  * *revolve* - If the *revolve* flag has a value of {{{YES}}} (*case sensitive*) then the search will be expanded to include assigned objects.  In the case of a [Contact] search the search result will also include all the [Enterprise] objects which matching [Contact]s are assigned to.  In the case of an [Enterprise] search the search result will also include all the [Contact] objects assigned to matching [Enterprise] objects.
+    * If a *filter* flag is also provided it is applied to the entire result of the query, after the results have been expanded via the *revolve* feature.
+    * Using *revolve* may result in a number of objects greater than the specified *limit* as the *limit* only applies to the search and not the *revolve*.
+    * *revolve* was added to zOGI in r875
+  * The flag space "*L:*" is reserved to provide the ability of applications to pass arbitrary values to the local backend.
+    * For instance,  a [PHP] application can pass the filter attribute "L:searchName" to the OpenGroupwareServer class provided by the zogi [PHP] API wrapper.  This attribute or its value is *NOT* processed by the server but used as an avenue for the application to communicate operational preferences with the local backend;  in this case name a search for caching.
+
+= Examples =
+
+= Appointments =
+
+For appointments the qualifier is a dictionary;  the following keys are supported: "endDate", "participants", "appointmentType", and "startDate".  All provided criteria are AND'd for the criteria.  
+  * *startDate* - The key "startDate" is mandatory and an exception will occur if you attempt to search for appointments without specifying a "startDate".  
+  * *endDate* - If no "endDate" is specified you query range will be eight days forward from the "startDate"  
+  * *participants* - "participants" may be either a single participant specified via objectId, a comma separated list of object Ids as a string, or an array of objectIds.
+    * If no "participants" are specified the query will search for appointments where the account performing the query is a participant.  
+    * If "participants" is an array the server returns appointments where ANY of the participants provided are participants.  
+    * Participants can be any mix of [Team], [Contact], and [Resource] objects.
+      * [Resource] objects are supported as participants for search for [Appointment] objects as of zOGI r789 (2007-11-02).
+  * *appointmentType* - The 'appointmentType' value may be a string specifying a single appointment type, a comma separated list of appointment types, or an array of strings each specifying an appointment type.
+    * If 'appointmentType' is specified the results will be qualified for only the appointments of one of the specified types.
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib, time, pprint
+
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+criteria = { }
+criteria['startDate'] = '2007-09-01 00:00'
+criteria['endDate'] = '2007-09-31 23:59'
+pprint.pprint(server.zogi.searchForObjects('Appointment', criteria, 4))
+print
+criteria['appointmentType'] = 'home' 
+pprint.pprint(server.zogi.searchForObjects('Appointment', criteria, 4))
+print
+criteria['appointmentType'] = [ 'meeting', 'outward' ]
+pprint.pprint(server.zogi.searchForObjects('Appointment', criteria, 4))
+print
+criteria = { }
+criteria['participants'] = [ 10201451, 10100 ]
+criteria['startDate'] = '2007-09-01 00:00'
+criteria['endDate'] = '2007-09-31 23:59'
+pprint.pprint(server.zogi.searchForObjects('Appointment', criteria, 4))
+print
+criteria['participants'] = '10201451'
+criteria['appointmentType'] = 'tradeshow'
+criteria['startDate'] = '2007-09-01 00:00'
+criteria['endDate'] = '2007-09-31 23:59'
+pprint.pprint(server.zogi.searchForObjects('Appointment', criteria, 4))
+}}}
+
+= Contacts  & Enterprises =
+
+Searching for [Contact] or [Enterprise] objects uses the advanced "qsearch" OpenGroupware Logic command;  this allows to design very specific queries.  
+
+A query is constructed as an array of criteria;  each criteria is a dictionary of four keys:
+ * "conjunction" - Either "AND" or "OR".  The conjunction controls how the criteria is logically joined to proceeding conjunctions;  the first provided criteria is not required to contain a conjunction.  If the first criteria does contain a conjunction value the value is ignored.
+ * "key" - The attribute to use for comparison.  This may be any of the [Contact] or [Enterprise] core attributes or the attribute name of a [companyValue].
+ * "value" - The value to compare to the attribute.  This value may be a number or a string as appropriate.
+ * "expression" - The method by which the "value" is compared to the "key".  Supported values are: "EQUALS", "LIKE", and "ILIKE" (case insensitive LIKE).  The "LIKE" and "ILIKE" expressions use the percent sign ("%") as the wildcard character.
+
+== Contacts ==
+{{{
+#!/usr/bin/env python
+import xmlrpclib
+
+server = xmlrpclib.Server('http://awilliam:fred@localhost/zidestore/so/awilliam/')
+criteria1 = { }
+criteria1['conjunction'] = 'OR'
+criteria1['key'] = 'email1'
+criteria1['value'] = '%@whitemice.org'
+criteria1['expression'] = 'LIKE'
+criteria2 = { }
+criteria2['conjunction'] = 'AND'
+criteria2['key'] = 'address.city'
+criteria2['value'] = 'Grand Rapids'
+criteria2['expression'] = 'LIKE'
+criteria3 = { } 
+criteria3['conjunction'] = 'OR'
+criteria3['key'] = 'phone.number'
+criteria3['value'] = '616.581.8010'
+criteria3['expression'] = 'EQUALS'
+query = [ criteria1, criteria2, criteria3 ]
+flags = { 'limit' : 25, 'filter' : '(isAccount = 1)' }
+result = server.zogi.searchForObjects('Contact', query, 0, flags)
+for contact in result:
+  print "ObjectId#%d (%s, %s)" % (contact['objectId'], contact['lastName'], contact['firstName'])
+}}}
+
+== Enterprises ==
+
+*NOTE:* Advanced search as given in the example below requires the use of zOGI revision 510 or higher.
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib
+
+server = xmlrpclib.Server('http://awilliam:fred@localhost/zidestore/so/awilliam/')
+criteria1 = { }
+criteria1['key'] = 'name'
+criteria1['value'] = 'M%'
+criteria1['expression'] = 'LIKE'
+criteria2 = { }
+criteria2['conjunction'] = 'AND'
+criteria2['key'] = 'address.city'
+criteria2['value'] = 'Grand Rapids'
+criteria2['expression'] = 'LIKE'
+criteria3 = { } 
+criteria3['conjunction'] = 'OR'
+criteria3['key'] = 'phone.number'
+criteria3['value'] = '616.581.8010'
+criteria3['expression'] = 'EQUALS'
+query = [ criteria1, criteria2, criteria3 ]
+result = server.zogi.searchForObjects('Enterprise', query, 0)
+for enterprise in result:
+  print "ObjectId#%d (%s)" % (enterprise['objectId'], enterprise['name'])
+}}}
+
+= Projects =
+
+[Project] searches let you specify multiple keys and how they will be conjoined;  so the second parameter in the case of a [Project] search is a dictionary.  The following keys should work: kind, name, number, objectId, ownerObjectId, and placeHolder.  [Project] searches can work two possible ways.  A "conjunction" key can be specified as either "AND" or "OR".  If the conjunction key is specified the vales of the strings "number" and "name" are performed as fuzzy matches.  If no conjunction is specified then all specified keys must match exactly.
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib, time, pprint
+
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+criteria = { }
+criteria['conjunction'] = 'AND'
+criteria['name'] = 'project'
+criteria['kind'] = ''
+pprint.pprint(server.zogi.searchForObjects('Project', criteria, 65535))
+}}}
+
+= Resources =
+
+== All search ==
+
+Sending an empty criteria will return all the [Resource] entities defined on the server.
+{{{
+#!/usr/bin/env python
+import xmlrpclib, time, pprint
+
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+print "All Resources"
+criteria = { }
+pprint.pprint(server.zogi.searchForObjects('Resource', criteria, 0))
+}}}
+
+== An exact search ==
+{{{
+#!/usr/bin/env python
+import xmlrpclib, time, pprint
+
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+criteria = { }
+criteria['category'] = 'Room'
+pprint.pprint(server.zogi.searchForObjects('Resource', criteria, 65535))
+}}}
+
+== A multi-key fuzzy search ==
+
+ * If a conjunction is included for a resource search all qualifiers are automatically fuzzy;  that is they use the SQL syntax {{{ LIKE ('%}}}value{{{%') }}} rather than a simple equality match.
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib, time, pprint
+
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+criteria = { }
+criteria['conjunction'] = 'AND'
+criteria['category'] = 'Room'
+criteria['notificationTime'] = 720
+pprint.pprint(server.zogi.searchForObjects('Resource', criteria, 65535))
+}}}
+
+= Tasks =
+
+For tasks the only qualifier currently supported is to specify the task list to be retrieved: archived, todo, or delegated.  Qualifier support will be expanded in the future.
+
+*NOTE:* Retrieving all the information that can be associated with a task is *EXTREMELY* expensive.  Tasks may have numerous notations, some of significant size.  In light of this it is *STRONGLY* advised that your retrieve task lists at a low detail level and then retrieve additional information concerning a task on an individual basis as needed.  Performance for retrieving tasks at a detail level of 0 is very good.  For relative comparison:  retrieving a to-do list of 259 items required on average 1.4 seconds,  requesting properties be included (detail level 16) increased that time to 4.2 seconds,  a detail level of 17 (including notations) increases it further to 12.1 seconds.
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+print "archived"
+print server.zogi.searchForObjects('Task', "archived", 0);
+print "todo"
+print server.zogi.searchForObjects('Task', "todo", 0);
+print "delegated"
+print server.zogi.searchForObjects('Task', "delegated", 0);
+}}}
+
+= Teams =
+
+When searching for teams two modes are supported:  a qualifier of "all" returns all the teams defined while a qualifier of "mine" returns the teams of which the user is a member.
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib, time, pprint
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+pprint.pprint(server.zogi.searchForObjects('Team', 'all', 128))
+pprint.pprint(server.zogi.searchForObjects('Team', 'all', 256))
+pprint.pprint(server.zogi.searchForObjects('Team', 'mine', 128))
+pprint.pprint(server.zogi.searchForObjects('Team', 'mine', 256))
+}}}
+
+See the documentation of the [Team] entity for an explanation of the specific detail levels as they apply to [Team]s.
+
+[http://code.google.com/p/zogi/ Home]
+ 
+ 
+ 
+ 
+ 
+ 
+ 

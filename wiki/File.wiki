@@ -1,0 +1,31 @@
+#summary The File entity
+
+= Attributes =
+
+ * *attachment* - This actual path on the server to access the file.  This is provided for debugging and administrative purposes only.  Neither the user nor the client will be able to access this file.
+ * *creatorObjectId* - The id of the [Account] which created this file.
+ * *folderObjectId* - The id of the [Folder] which contains this file.
+ * *ownerObjectId* - The id of the [Account] which owns the file.
+ * *projectObjectId* - The id of the [Project] which contains this file.
+
+= Example =
+
+{{{
+{'attachment': '/var/lib/opengroupware.org/documents/470630/470000/470830.dia',
+ 'creation': <DateTime '20070115T01:58:41' at b79c43cc>,
+ 'creatorObjectId': 10160,
+ 'entityName': 'File',
+ 'fileSize': 13204,
+ 'fileType': 'dia',
+ 'filename': 'NetMap-WAN',
+ 'folderObjectId': 470650,
+ 'lastModified': <DateTime '20070115T01:58:41' at b79c438c>,
+ 'objectId': 470830,
+ 'ownerObjectId': 10160,
+ 'projectObjectId': 470630,
+ 'status': 'released',
+ 'title': 'Diagram of corporate WAN',
+ 'version': 1}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

@@ -1,0 +1,45 @@
+#summary PluginData
+
+The purpose of the [PluginData] entity is to facilitate the passing of custom and/or site-specific data from the server to the client within the zOGI transaction.  [PluginData] entities may be passed to the client in either the *PLUGINDATA* key of a specific object or within the response to [getObjectsById], [getObjectsById], or [searchForObjects] requests.
+
+The [PluginData] entities' only requirement is that it possess an "entityName" attribute of "PluginData" and a "pluginName" attribute which contains a string of greater than six characters and less than 255 characters in length. A [PluginData] entity *MUST* not contain an "objectId" attribute.  If a content plugin creates more than one type of response then it is *RECOMMENDED* that these response types be distinguished via a string attribute named *dataType*.
+
+==Example==
+
+The org.opengroupware.coils.twitter plugin provides two different elements in a response;  a dataType of "Tweet" representing a Twitter message from the relevant account's timeline, and a "Tweeter" representing a Twitter account.
+{{{
+ {'created': 'Sat Dec 19 01:41:03 +0000 2009',
+  'entityName': 'PluginData',
+  'pluginName': 'org.opengroupware.coils.twitter',
+  'dataType': 'Tweet',
+  'id': '6815511180',
+  'inReplyTo': {'UserId': '', 'id': '', 'screenName': ''},
+  'screenName': 'whitemice',
+  'text': 'Almost 40 and Toys-r-Us is still cool.  THEY HAVE A REMOTE CONTROL DRAGON!  It walks and roars.... awesome.',
+  'userId': '15372406'},
+
+ {'description': '',
+  'entityName': 'PluginData',
+  'pluginName': 'org.opengroupware.coils.twitter',
+  'dataType': 'Tweeter',
+  'id': '15372406',
+  'location': 'Grand Rapids, MI',
+  'screenName': 'whitemice',
+  'timeZone': 'Eastern Time (US & Canada)',
+  'url': 'http://www.whitemiceconsulting.com'}]
+}}}
+
+
+==Client Handling of PluginData entities==
+
+Handling of [PluginData] entities is *OPTIONAL*,  a client *MAY* completely ignore [PluginData] entities.  In this case the client should simply not specify detail level zOGI_INCLUDE_PLUGINS (8192) so that plugin data will not be included in the response.
+
+A zOGI client application presented with a [PluginData] entity should examine the "pluginName" attribute to determine if it can process/present the included information.  If the application does not recognize the value of "pluginName" the [PluginData] entity *MUST* be discarded.  
+
+Any caching of of the [PluginData] payload should be handled by the specific application for which the data is intended.  General purpose zOGI client libraries/wrappers should do nothing more then decode the data structure to an appropriate type (1) and hand it off to the client application.
+
+(1) Such as System.Collections.Hashtable for .NET or an array for PHP.
+
+See also: [ApplicationAlert] and [UserAlert]
+
+[http://code.google.com/p/zogi/ Home]

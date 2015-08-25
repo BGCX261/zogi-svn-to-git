@@ -1,0 +1,13 @@
+Object wrapper for using the ZOGI API via PHP
+
+License: LGPL
+
+Requires the PEAR XML_RPC 1.5.1;  install via "pear install XML_RPC"
+
+No warranty or guaranteed suitability for any purpose.
+
+Copyright Whitemice Consulting, 2007
+
+Adam Tauno Williams
+awilliam@whitemiceconsulting.com
+2007-05-19

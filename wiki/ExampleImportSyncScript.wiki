@@ -1,0 +1,121 @@
+#summary Example Import/Sync Script
+
+= Example Import Scripts =
+
+{{{
+#!/usr/bin/env python
+
+import sys, csv, xmlrpclib, time
+server =
+xmlrpclib.Server('http://{USER}:{SECRET}@{HOST}/zidestore/so/{USER}')
+permissions = [ { 'operations' : 'rw',
+                  'targetObjectId' : 970990 },
+                { 'operations' : 'rw',
+                  'targetObjectId' : 11530 } ] 
+counter = 0
+reader = csv.reader(open("tmp/WYCSalesforce.csv", "rb"), delimiter='|', quoting=csv.QUOTE_NONE)
+for row in reader:
+  # Search for enterprise and if not found create one
+  criteria = [ { 'conjunction' : 'AND',
+                 'key' : 'division',
+                 'value': 'WYC',
+                 'expression' : 'EQUALS' },
+               { 'conjunction' : 'AND',
+                 'key' : 'address.city',
+                 'value' : row[14],
+                 'expression' : 'ILIKE' },
+               { 'conjunction' : 'AND',
+                 'key' : 'name',
+                 'value' : row[1],
+                 'expression' : 'ILIKE' } ]
+  result = server.zogi.searchForObjects('Enterprise', criteria, 0)
+  if (len(result) == 0):
+    print 'Creating new enterprise'
+    enterprise = server.zogi.putObject( 
+               { 'objectId' : 0,
+                 'entityName' : 'Enterprise',
+                 'name' : row[1],
+                 '_ADDRESSES' : [ { 'name1' : row[1],
+                                    'street' : row[13],
+                                    'city' : row[14],
+                                    'state' : row[15],
+                                    'zip' : row[16],
+                                    'type' : 'ship' } ],
+                 '_ACCESS' : permissions,
+                 '_COMPANYVALUES' : [ { 'attribute' : 'division',
+                                        'value' : 'WYC' },
+                                      { 'attribute' : 'salesperson',
+                                        'value' : row[0] },
+                                      { 'attribute' : 'mailmktcode',
+                                        'value' : 'import082007' } ] }
+      )
+    print 'Created Enterprise#%d' % enterprise['objectId']
+  else:
+    enterprise = result[0]
+    print 'Found Enterprise#%d' % enterprise['objectId']
+  # Search for contact
+  criteria = [ { 'conjunction' : 'AND',
+                 'key' : 'division',
+                 'value': 'WYC',
+                 'expression' : 'EQUALS' },
+               { 'conjunction' : 'AND',
+                 'key' : 'firstName',
+                 'value' : row[2],
+                 'expression' : 'ILIKE' },
+               { 'conjunction' : 'AND',
+                 'key' : 'lastName',
+                 'value' : row[3],
+                 'expression' : 'ILIKE' },
+               { 'conjunction' : 'AND',
+                 'key' : 'address.city',
+                 'value' : row[6],
+                 'expression' : 'ILIKE' } ]
+  result = server.zogi.searchForObjects('Contact', criteria, 0)
+  if (len(result) == 0):
+    # Add new contact
+    contact = server.zogi.putObject(
+      { 'objectId' : 0,
+        'entityName' : 'Contact',
+        'firstName' : row[2],
+        'lastName' : row[3],
+        '_ADDRESSES' : [ { 'name1' : row[1],
+                           'name2' : 'ATTN:' + row[2] + ' ' + row[3],
+                           'street' : row[5],
+                           'city' : row[6],
+                           'state' : row[7],
+                           'zip' : row[8],
+                           'type' : 'mailing' } ],
+        '_ACCESS' : permissions,
+        '_PHONES' : [ { 'type' : '01_tel',
+                        'number' : row[9],
+                        'info' : 'import082007' },
+                      { 'type' : '10_fax',
+                        'number' : row[11],
+                        'info' : 'import082007' },
+                      { 'type' : '03_tel_funk',
+                        'number' : row[10],
+                        'info' : 'import082007' } ],
+        '_COMPANYVALUES' : [ { 'attribute' : 'job_title',
+                               'value' : row[4] },
+                             { 'attribute' : 'email1',
+                               'value' : row[12] },
+                             { 'attribute' : 'salesperson',
+                               'value' : row[0] },
+                             { 'attribute' : 'division',
+                               'value' : 'WYC' },
+                             { 'attribute' : 'mailmktcode',
+                               'value' : 'import082007' } ], 
+        '_ENTERPRISES' : [ { 'targetObjectId' : enterprise['objectId'] } ] }
+                ) 
+    print 'Created Contact#%d' % contact['objectId']
+  else:
+    print 'Found Contact#%d' % result[0]['objectId']
+  if counter == 250:
+    time.sleep(5)
+    counter = 0
+  else:
+    time.sleep(0.2)
+  counter = counter + 1
+}}}
+
+[http://code.google.com/p/zogi/ Home]

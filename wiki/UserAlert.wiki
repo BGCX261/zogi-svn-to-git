@@ -1,0 +1,9 @@
+#summary UserAlert
+
+The [UserAlert] entity contains, besides the "entityName", only a "message" attribute.  "message" contains a string to be presented to the user.  This entity allows the zOGI bundle or a plugin to send a message to the user of a client application.  This message *MUST* be presented to the user without alteration;  if the client application is a non-interactive process the message *MUST* be forwarded to the user or an administrator via some means.  If the client application maintains a log file or event log the message *MUST* be recorded.
+
+An application that does not respond correctly to [UserAlert] objects is not considered to be zOGI compatible.
+
+See also: [ApplicationAlert] and [PluginData]
+
+[http://code.google.com/p/zogi/ Home]

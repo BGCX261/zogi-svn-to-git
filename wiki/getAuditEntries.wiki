@@ -1,0 +1,23 @@
+#summary getAuditEntries
+
+= Introduction =
+
+The getAuditEntries was introduced into the zOGI API as of r920 / 2008-03-05.  That is equivalent to OpenGroupware r2093;  use of this method requires r2092 even if zOGI is compiled separately.   The results of the method is an array of up to 150 [logEntry] entities.  If more entries are desired the client should page the results by calling the method again with the highest *objectId* received.
+
+The intended purpose of this is to allow external systems to track changes to the OGo data; see [http://docs.opengroupware.org/Members/whitemice/OGoMojo/MOGIMon-HOWTO/view MOGIMon] for a primitive example.  The getAuditEntries permits such functionality *without* have to create a direct/backdoor connection to the OpenGroupware database.
+
+*Only the OpenGroupware super user (root) can call getAuditEntries.*
+
+= Example =
+
+Get the next 150 audit entries since, but not including, 10811321.
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib, time, pprint
+
+server = xmlrpclib.Server('http://{USER}:{SECRET}@{HOST}/zidestore/so/{USER}/')
+pprint.pprint(server.zogi.getAuditEntries(10811321))
+}}}
+
+[http://code.google.com/p/zogi/ Home]

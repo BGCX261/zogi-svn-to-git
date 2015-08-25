@@ -1,0 +1,27 @@
+#summary The Resource entity
+
+In [OpenGroupware] a resource represents some kind of resource that can be allocated to a scheduled event in much the same manner as a participant.  Examples of resources might be meeting rooms, projectors, conference devices, etc...  [Resource]s are divided into categories, distinguished via the "category" key.
+
+*NOTE:* Creation and modification of resources is *not* supported by zOGI.  [Resource]s can only be queried and assigned to scheduled events.  In the [OpenGroupware] web interface resources can only be created or modified by the administrator.
+
+= Example =
+
+{{{
+[{'_LOGS': [{'action': '00_created',
+             'actionDate': <DateTime '20070114T03:55:04' at 8148e2c>,
+             'actorObjectId': 10000,
+             'entityName': 'logEntry',
+             'message': 'Appointment Resource created',
+             'objectId': 470740}],
+  '_OBJECTLINKS': [],
+  '_PROPERTIES': [],
+  'category': 'Room',
+  'email': '',
+  'emailSubject': '',
+  'entityName': 'Resource',
+  'name': 'South Conference Roomt',
+  'notificationTime': 720,
+  'objectId': 470730}]
+}}}
+
+[http://code.google.com/p/zogi/ Home]

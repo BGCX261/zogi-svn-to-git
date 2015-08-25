@@ -1,0 +1,64 @@
+#summary The "defaults" entity
+
+= Introduction =
+
+The "defaults" entity is a [UnderstandingEntities transient entity] provided when a call to the [getLoginAccount] method made.
+
+== Example ==
+
+{{{
+{'_DEFAULTS': {'accountObjectId': 10100,
+               'calendarPanelObjectIds': [180790,
+                                          1195580,
+                                          970990,
+                                          465990,
+                                          465970],
+               'entityName': 'defaults',
+               'isDST': 0,
+               'notificationCC': '*********************',
+               'secondsFromGMT': -18000,
+               'timeZone': 'EST',
+               'timeZoneName': 'US/Eastern'},
+ 'entityName': 'Account',
+ 'login': 'adam',
+ 'objectId': 10100,
+ 'version': 592}
+}}}
+
+Obviously not all of a user's many defaults are provided by the [defaults] entity,  only key values critical to the smooth integration of client applications with various functions of the server.  Most of the provided default values relate [Calendar to building calendar applications].
+
+ * *calendarPanelObjectIs* - An array of ids for the [Contact] and [Team] objects that the user has selected via the OpenGroupware WebUI calendar drill-down view.
+   * This array is a composite of the server's internal "scheduler_panel_accounts", "scheduler_panel_persons", "scheduler_panel_teams", and "scheduler_panel_resourceNames" defaults.  zOGI compresses these defaults into a single list of objectIds.
+ * *isDST* - Indicates wether or not daylight savings time is _currently_ in effect in the user's timezone.
+ * *secondsFromGMT* - The number of seconds the user's time zone _currently_ differs from GMT including an adjust for daylight savings time if is currently in effect.
+ * *timeZone* - The user's timezone.
+ * *timeZoneName* - A human readable description of the user's timezone.
+ * *notificationCC* - The notification CC address specified by the user.  This value is a single e-mail address,  multiple comma separated values are *not* supported.  This value is supplied in addition to the *email1*, *email2*, and *email3* values of the user's [Contact] entity when a request to [getNotifications] is performed; providing the user with *four* notification addresses.
+
+As of r945 (ZideStore r2119) support for the following defaults was added;  these attributes are intended primarily to facilitate the use of mobile device's via GroupDAV sync:
+ * *appointmentWriteAccess* - An array of objectIds (integers) representing teams and/or accounts.  These objects are added to the write access list of an event create by ZideStore.
+ * *appointmentReadAccessTeam* - A single objectId for a team (integer) used as the default read access for an event created via ZideStore's /Overview folder.
+
+== Storing a user's defaults ===
+
+A user can modify the specific defaults supported by the [defaults] entity via [putObject].
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib, time, sys, pprint
+
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOSTNAME}/zidestore/so/{USER}/')
+defaults = { }
+defaults['entityName'] = 'defaults'
+defaults['timeZone'] = 'EST'
+defaults['notificationCC'] = '***************'
+defaults['calendarPanelObjectIds'] = [ 180790, 1112560, 195180, 1195580, 
+                                       830020, 970990, 11530, 465950 ] 
+pprint.pprint(server.zogi.putObject(defaults))
+}}}
+
+Only the defaults: *notificationCC*, *timeZone*, and *calendarPanelObjectIds* can currently be modified via zOGI.  The *timeZone* default *MUST* be a valid time zone abbreviation as defined by libFoundation.  The objects specified in *calendarPanelObjectIds* will be sorted out by type and applied to appropriate server side defaults so that this value will work in conjunction with the drill down view of WebUI.
+
+The result of a successful call to [putObject] of a [defaults] entity will be as if the [getLoginAccount] method was called.
+
+[http://code.google.com/p/zogi/ Home]

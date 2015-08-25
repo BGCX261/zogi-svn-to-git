@@ -1,0 +1,5 @@
+#summary What is an Object Link?
+
+An object link is represented in zOGI by the [objectLink] entity.
+
+[http://code.google.com/p/zogi/ Home]

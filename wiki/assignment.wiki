@@ -1,0 +1,49 @@
+#summary The assignment entity
+
+The [assignment] entity represents a formal relationship between objects;  unlike an [objectLink] which represents an information relationship between objects.  The associated [Contact]s of a [Project] are one example of a formal [assignment] relationship,  another would the be association of a [Contact] with an [Enterprise].
+
+*NOTE:* The "accessRight" and "info" keys are provided from the database,  but their meaning is not yet documented.
+
+*IMPORTANT:*  The [assignment] is one of the two entity types that can under go [UnderstandingEntities transformation];  specific conditions can transform an [assignment] into an [acl].  Read [UnderstandingEntities Understanding Entities] for specific information.
+
+= Example =
+
+{{{
+ {'accessRight': '',
+  'entityName': 'assignment',
+  'info': '',
+  'objectId': 479370,
+  'sourceEntityName': 'Project',
+  'sourceObjectId': 479340,
+  'targetEntityName': 'Contact',
+  'targetObjectId': 306970}
+
+ {'accessRight': '',
+  'entityName': 'assignment',
+  'info': '',
+  'objectId': 479480,
+  'sourceEntityName': 'Project',
+  'sourceObjectId': 479340,
+  'targetEntityName': 'Enterprise',
+  'targetObjectId': 373790}
+
+ {'accessRight': 'drwm',
+  'entityName': 'assignment',
+  'info': '',
+  'objectId': 479400,
+  'sourceEntityName': 'Project',
+  'sourceObjectId': 479340,
+  'targetEntityName': 'Team',
+  'targetObjectId': 10003}
+
+ {'accessRight': 'iw',
+  'entityName': 'assignment',
+  'info': '',
+  'objectId': 479390,
+  'sourceEntityName': 'Project',
+  'sourceObjectId': 479340,
+  'targetEntityName': 'Contact',
+  'targetObjectId': 10160}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

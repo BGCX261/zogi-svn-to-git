@@ -1,0 +1,24 @@
+#summary The getObjectsById method
+
+The [getObjectsById] method is the plural form of the [getObjectById] method.  [getObjectsById] is used to request a set of objects from the server.  The first parameter is an array of object ids and the second parameter specifies the level of detail to retrieve for each of the objects.  
+
+An optional third parameter can provide a dictionary of flags;  currently the only supported flag is *filter*.  The filter flag allows an [EOQualifier] to be applied to the results of object retrieval;  objects are first requested from the groupware database and then the filter is applied, so the client will only receive those objects requested that satisfied the filter requirements.  In all cases it is entirely up the client application to specify a valid filter.
+
+*NOTE:* If you request objects that do not exist on the server you will receive [Unknown] entities in the response.  These entities have the same "objectId" as requested but with an "entityName" of "[Unknown]".
+
+= Example =
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+print server.zogi.getObjectsById([19100, 27160], 65535)
+}}}
+
+= Result =
+
+The result is an array of object dictionaries.
+
+It is *NOT* guaranteed that objects will be returned in the same order as they were listed in the first parameter.  Clients must *NOT* rely on ordering of the result array.
+
+[http://code.google.com/p/zogi/ Home]

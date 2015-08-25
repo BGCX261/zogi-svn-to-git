@@ -1,0 +1,40 @@
+{
+  cvsid         = "$Id$";
+  bundleHandler = LSJournalCommands;
+
+  requires = {
+    bundleManagerVersion = 1;
+    bundles = (
+      { name = LSBase;    type = cmd; },
+    );
+    classes = (
+      { name = NSObject;              },
+      { name = LSBaseCommand;            exact-version = 1; },
+      { name = LSDBObjectBaseCommand;    exact-version = 1; },
+      { name = LSDBObjectDeleteCommand;  exact-version = 1; },
+      { name = LSDBObjectNewCommand;     exact-version = 1; },
+      { name = LSDBObjectSetCommand;     exact-version = 2; },
+      { name = LSDBObjectGetCommand;     exact-version = 3; },
+      { name = LSDBFetchRelationCommand; exact-version = 1; },
+      { name = LSExtendedSearchCommand;  exact-version = 2; },
+    );
+  };
+
+  provides = {
+    LSCommands = (
+        { name = "journalentry::new";                },
+        { name = "journalentry::set";                },
+        { name = "journalentry::get";                },
+        { name = "journalentry::delete";             },
+        { name = "journalentry::get-by-globalid";    },
+    }
+
+    classes = (
+        { name = LSJournalEntryCommands;             },
+        { name = LSNewJournalEntryCommand;           },
+        { name = LSSetJournalEntryCommand;           },
+        { name = LSDeleteJournalEntryCommand;        },
+        { name = LSJournalEntriesForGlobalIDs;       },
+    };
+  };
+}

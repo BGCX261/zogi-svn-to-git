@@ -1,0 +1,59 @@
+#summary Developing Calendar/Scheduling Applications
+
+= Recommendations For Calendar/Scheduling Applications =
+
+== Time Zones ==
+
+Operations between client applications and the server are always performed in GMT,  this means the client application must translate GMT times from the server and present them to the user as well as converting user input & interface times back to GMT to perform server operations.  To facilitate this the [getLoginAccount] method returns the [defaults] entity which provides information about the time zone configured for the user and the current offset from GMT.
+
+== Performance ==
+
+Applications, of course, need to present the name of participants.  The [participant] is referred to via the "participantObjectId" attribute of [participant] entity. It is imperative to performance that applications cache the entities referred to as participants;  the objectId of both [Contact] and [Team] entities is unique so caching the entity should be trivial.  Unnecessary requests to the server both slow down the application and tax the server.
+   * Applications that use a host or global cache (such as web applications) should cache each sessions entities separately in order to avoid inadvertently exposing objects restricted by permissions to inappropriate users;  use a key like {user login}.{entity objectId} when caching objects.
+    * [PHP] applications are recommended to use [http://www.danga.com/memcached/ memcached] so entities can be cached persistently.   
+    * Java and C# developers should consider [http://www.db4o.com/ db4o] for persistently caching entities.  
+      * The .NET zOGI binding [http://code.google.com/p/consonance/wiki/ZOGI Whitemice.ZOGI] uses [http://www.db4o.com/ db4o].
+
+ * Some [Team] entities can contain large numbers of [Contact]s.  
+    * Team id# 10003 ("all intranet") should never be expanded by applications;  this team contains every account defined on the system.  In a future release of zOGI the expansion of team#10003 will be supressed on the server. See [http://code.google.com/p/zogi/issues/detail?id=20 Issue#20]
+
+ * [Team] entities are rendered with a *CONTACT* key of containing fully rendered [Contact] entities (instead of [assignment] entities) in order to immediately provide the client application with data to cache.  No second request is required to request the names of team members.
+
+== Finness ==
+
+ * *INDICATE CONFLICTS* - Conflict detection is one of the most useful and powerful features of the scheduling application.  Applications should visually indicate when an appointment is in conflict and provide the user some method to see and potentially resolve those conflicts.
+
+ * Allow the user to set the roles of participants; this avoids creating unnecessary conflicts.  The use of the "NON-PARTICIPANT" should be encouraged for when the user wants to place an event on the calendar but does not want to reserve or block-out another user's or team's time.
+   * Whenever the team "all intranet" (objectId#10003) is used as a participant the role should always be "NON-PARTICIPANT".  
+   * In practice use of the "all intranet" team (objectId#10003) is usually just a lazy way to post events.  Users should be encouraged to select the appropriate participants.
+
+ * Honor the FLAGS provided by the [Appointment] entity.
+    * The meaning of the FLAGS is documented in the [Appointment] entity page.
+    * An important note is that applications will receive "NONVISIBLE" appointments.  These appointments are provided for informational purposes but most of attributes of an [Appointment] entity are not provided.  The presence of a "NONVISIBLE" appointment indicates that one of the [participant]s specified has an appointment within the date range specified but the user does not have sufficient permissions to view the appointment details.
+
+ * [note] entities can be linked to both an appointment and a project.  In this manner a note may establish a relationship between an appointment and a project.
+   * If your application supports projects to should provide a means to navigate from a [note] to the project to which it is also linked.
+
+ * Visually indicate when a user's participation is in a *NEEDS-ACTION* status;  users should be encouraged to acknowledge or decline appointments unless their role is NON-PARTICIPANT.  
+   * A user may change their participant status, rsvp flag, and leave a comment relating to their participation even in an appointment to which they do not have write access by sending a [ParticipantStatus] entity to the server.
+
+ * Visually indicate when an appointment where the user is either the creator or has a role of CHAIR has participants who have set the RSVP flag.  If the "rsvp" value of the [participant] entity has a value of 1 then the participant has been requested to be contacted by the appointment creator or organizer.
+   * When a user sets the RSVP flag it is recommended that the comment be automatically e-mailed to the meeting creator and all participants with a role of CHAIR.  It is the responsibility of the client application to implement this notification;  the server will not perform attendee status change notification.
+   * It is recommended that the application provide a way for CHAIR users and creators to respond to RSVP participants; a mailto link with the participants email1 atribute, etc...  If the application provides such a feature it should update the RSVP value on the [Appointment] [participant] back to 0 when the [participant] is responded too.
+
+== Example ==
+
+A "NONVISBLE" appointment will look like:
+{{{ 
+ {'FLAGS': ['NONVISIBLE', 'READONLY'],
+  'end': <DateTime '20070909T03:59:00' at b795224c>,
+  'entityName': 'Appointment',
+  'objectId': 8603860,
+  'ownerObjectId': 466810,
+  'readAccessTeamObjectId': '',
+  'start': <DateTime '20070908T04:00:00' at b795232c>,
+  'version': 1,
+  'writeAccessObjectIds': []},
+}}}
+
+[http://code.google.com/p/zogi/ Home]

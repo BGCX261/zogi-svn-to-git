@@ -1,0 +1,22 @@
+#summary The getObjectVersionsById method
+
+The [getObjectVersionById] returns an array of dictionaries containing the objectId, entityName, and the version of the object.  The purpose of this method is to provide a quick and easy way for clients maintaining a local cache of objects to verify whether the cached copies of a set of objects is current.
+
+= Example =
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+print server.zogi.getObjectVersionsById([29420, 21060, 10120])
+}}}
+
+= Results =
+
+{{{
+[{'entityName': 'Appointment', 'version': [''], 'objectId': 29420}, 
+ {'entityName': 'Enterprise', 'version': [3], 'objectId': 21060}, 
+ {'entityName': 'Contact', 'version': [7], 'objectId': 10120}]
+}}}
+
+[http://code.google.com/p/zogi/ Home]

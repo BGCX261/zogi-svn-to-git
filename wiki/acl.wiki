@@ -1,0 +1,60 @@
+#summary The acl entity
+
+= Introduction =
+
+The [acl] entity encodes an access control rule.  Access Control Rules (acl) are a generic way of controlling access to most objects.  In OpenGroupware the [Contact], [Enterprise], [Project], [Team], and [BLOB] entities all support ACLs
+
+*IMPORTANT:*  The [acl] is one of the two entity types that can under go [UnderstandingEntities transformation];  specific conditions can transform an [acl] into an [assignment].  Read [UnderstandingEntities Understanding Entities] for specific information.
+
+= Details =
+
+Each [acl] applies to another specific object, either a [Contact] or a [Team].  The "targetObjectId" is guaranteed to be unique within a set of ACLs.  The "parentObjectId" is the object for which the ACL rules controls access.
+
+In order to eliminate an ACL you must put it with a blank operation (permit no operations).  This will delete the ACL.  ACLs operate in this way so that they are deliberately difficult to remove by accident.
+
+When storing an ACL to the server only the "targetObjectId" and "operations" keys must be provided.  Other keys will be silently ignored by the ACL update routines.
+
+= Attributes =
+
+  * *operations* - A string encoding of the operations granted on *parentObjectId* to the *targetObjectId* entity.  Order is not relevant and each character denotes a specific privilege.
+    * *r* - Read
+    * *w* - Write
+  * *parentObjectId* - The *objectId* of the entity to which the [acl] applies.
+  * *targetEntityName* - The type of object referred to by the *targetObjectId* attribute.  This value is provided as a convenience for thin platforms such as a web application that do not maintain a persistent cache of objects.  This value will be either "Contact" for a user account or "Team" if permissions where granted on the basis of [Team] membership.
+  * *targetObjectId* - The *objectId* of the entity to which permissions have been granted.
+
+= Examples =
+
+{{{
+{'entityName': 'acl',
+ 'operations': 'wr',
+ 'parentObjectId': 10160,
+ 'targetEntityName': 'Contact',
+ 'targetObjectId': 10160}
+
+{'entityName': 'acl',
+ 'operations': 'wr',
+ 'parentObjectId': 10160,
+ 'targetEntityName': 'Team',
+ 'targetObjectId': 9981}
+
+{'entityName': 'acl',
+ 'operations': 'r',
+ 'parentObjectId': 10160,
+ 'targetEntityName': 'Team',
+ 'targetObjectId': 10003}
+
+{'entityName': 'acl',
+ 'operations': 'wr',
+ 'parentObjectId': 10160,
+ 'targetEntityName': 'Team',
+ 'targetObjectId': 9991}
+
+{'entityName': 'acl',
+ 'operations': 'r',
+ 'parentObjectId': 10160,
+ 'targetEntityName': 'Contact',
+ 'targetObjectId': 472850}
+}}}
+
+[http://code.google.com/p/zogi/ Home] 

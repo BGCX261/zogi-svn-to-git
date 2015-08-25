@@ -1,0 +1,24 @@
+#summary The unflagFavorites method
+
+= Introduction =
+
+The [unflagFavorites] method removes the favorite status from the provided objects.  The single parameter may be an array of objectIds or a CSV string of objectIds.  If one of the provided objectIds is not currently a favorite than it is silently ignored.
+
+A [Contact] or [Enterprises] favorite status can also be modified when the object is stored via the [putObject] method.  Simply include the "favorite" or "unfavorite" flags in the *FLAGS* array key when storing the object.  [unflagFavorites] is intended for when numerous objects need to be flagged as not-favorite and it avoids bumping the version number of the object's whose favorite status is modified.  For adding favorite status on a collection of objects use the [flagFavorites] method.
+
+= Details =
+
+Objects that are marked as favorites can be retrieved with the [getFavoritesByType] method.
+
+OpenGroupware currently only stores favorites for Projects, Enterprises, and Contacts.  If you attempt to favorite an object of an unsupported type an exception will occur.
+
+= Example =
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib,pprint
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+print server.zogi.unflagFavorites(10000)
+}}}
+
+[http://code.google.com/p/zogi/ Home]

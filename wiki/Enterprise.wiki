@@ -1,0 +1,126 @@
+#summary The Enterprise Entity
+
+See the documentation for the [putObject] method for an example of how to store an [Enterprise] to the server.  
+
+*NOTE:* The special ACCESS key which contains an array of [acl] entities was added as of r430.
+
+= Attributes =
+
+ * *ACCESS* - This key contains an array of the [acl] entities applied to an object.  These key was added as of r430 (2007-06-25)
+ * *ADDRESSES* - This key contains an array of the [address] entities associated with the [Enterprise].  
+ * *COMPANYVALUES* - This key contains an array of the the [companyValue] entities associated with the [Enterprise].
+ * *CONTACTS* - This key contains an array [assignment] entities for each of the [Contact] objects which have been assigned to the [Enterprise].
+ * *FLAGS* - This key is a read-only array of strings which provides meta-data about the object.
+   * *WRITE* - The requesting user has sufficient privileges to modify the object.
+   * *READONLY* - The requesting user has no rights to modify the object.
+   * *FAVORITE* - The object has been marked as a favorite by the user.
+   * *SELF* - The user is the owner of the object.
+   * *PRIVATE* - The private flag of the object has been set.
+ * *LOGS* - This key contains an array of [logEntry] entities.
+ * *OBJECTLINKS* - This key contains an array of the [objectLink] entities in which the [Enterprise] is either a target or source.
+ * *PHONES* - This key contains an array of the [telephone] entities associated with the [Enterprise].  
+ * *PROJECTS* - This key contains an array of the [Project] entities to which the [Enterprise] has been assigned.
+ * *PROPERTIES* - The [objectProperty] entities attached to the [Enterprise].
+
+= Example =
+
+{{{
+{'FLAGS': ['WRITE', 'SELF'],
+ '_ACCESS': [{'entityName': 'acl',
+              'operations': 'rw',
+              'parentObjectId': 500380,
+              'targetEntityName': 'Contact',
+              'targetObjectId': 10160},
+             {'entityName': 'acl',
+              'operations': 'r',
+              'parentObjectId': 500380,
+              'targetEntityName': 'Team',
+              'targetObjectId': 10003}],
+ '_ADDRESSES': [],
+ '_COMPANYVALUES': [{'attribute': 'email2',
+                     'companyObjectId': 500380,
+                     'entityName': 'companyValue',
+                     'label': '',
+                     'objectId': 500382,
+                     'type': 3,
+                     'uid': '',
+                     'value': 'fred@backbone.local'}],
+ '_CONTACTS': [{'entityName': 'assignment',
+                'objectId': 500399,
+                'sourceEntityName': 'Enterprise',
+                'sourceObjectId': 500380,
+                'targetEntityName': 'Contact',
+                'targetObjectId': 10160}],
+ '_LOGS': [{'action': '00_created',
+            'actionDate': <DateTime '20070625T14:04:18' at b79b8c6c>,
+            'actorObjectId': 10160,
+            'entityName': 'logEntry',
+            'entityObjectId': 500380,
+            'message': 'Company created',
+            'objectId': 500388},
+           {'action': '05_changed',
+            'actionDate': <DateTime '20070625T14:04:20' at b79b874c>,
+            'actorObjectId': 10160,
+            'entityName': 'logEntry',
+            'entityObjectId': 500380,
+            'message': 'company changed',
+            'objectId': 500398}],
+ '_OBJECTLINKS': [],
+ '_PHONES': [{'companyObjectId': 500380,
+              'entityName': 'telephone',
+              'info': 'Old number',
+              'number': '6163401149',
+              'objectId': 500385,
+              'realNumber': '6163401149',
+              'type': '01_tel',
+              'url': ''},
+             {'companyObjectId': 500380,
+              'entityName': 'telephone',
+              'info': '',
+              'number': '',
+              'objectId': 500387,
+              'realNumber': '',
+              'type': '10_fax',
+              'url': ''},
+             {'companyObjectId': 500380,
+              'entityName': 'telephone',
+              'info': '',
+              'number': '',
+              'objectId': 500386,
+              'realNumber': '',
+              'type': '02_tel',
+              'url': ''}],
+ '_PROJECTS': [{'entityName': 'assignment',
+                'objectId': 500395,
+                'sourceEntityName': 'Enterprise',
+                'sourceObjectId': 500380,
+                'targetEntityName': 'Project',
+                'targetObjectId': 500389}],
+ '_PROPERTIES': [{'attribute': 'myStringAttribute',
+                  'entityName': 'objectProperty',
+                  'label': '',
+                  'namespace': 'http://www.whitemiceconsulting.com/properties/ext-attr',
+                  'parentObjectId': 500380,
+                  'propertyName': '{http://www.whitemiceconsulting.com/properties/ext-attr}myStringAttribute',
+                  'type': '',
+                  'value': 'Hi there',
+                  'valueType': 'string',
+                  'values': ''}],
+ 'associatedCategories': '',
+ 'associatedCompany': '',
+ 'associatedContacts': '',
+ 'bank': '',
+ 'bankCode': '',
+ 'email': '',
+ 'entityName': 'Enterprise',
+ 'fileAs': '',
+ 'imAddress': '',
+ 'keywords': '',
+ 'name': 'Fred Inc.',
+ 'objectId': 500380,
+ 'ownerObjectId': 10160,
+ 'url': '',
+ 'version': 2}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

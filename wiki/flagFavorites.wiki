@@ -1,0 +1,24 @@
+#summary flagFavorites
+
+= Introduction =
+
+The [flagFavorites] method marks objects as favorites.  If a specified object is already a favorite then it is silently ignored.  The single parameter may be an array of objectIds or a CSV string of objectIds.
+
+A [Contact] or [Enterprises] favorite status can also be modified when the object is stored via the [putObject] method.  Simply include the "favorite" or "unfavorite" flags in the *FLAGS* array key when storing the object.  [flagFavorites] is intended for when numerous objects need to be flagged as favorites and it avoids bumping the version number of the object's whose favorite status is modified.  For removing the favorite status on a collection of objects use the [unflagFavorites] method.
+
+= Details =
+
+Objects that are marked as favorites can be retrieved with the [getFavoritesByType] method.
+
+OpenGroupware currently only stores favorites for Projects, Enterprises, and Contacts.  If you attempt to favorite an object of an unsupported type an exception will occur.
+
+= Example =
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib,pprint
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+print server.zogi.flagFavorites(10000)
+}}}
+
+[http://code.google.com/p/zogi/ Home]

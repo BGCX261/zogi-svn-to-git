@@ -1,0 +1,26 @@
+#summary The getTypeOfObject Method
+
+The [getTypeOfObject] method returns a single string.  This is the entityName of the specified object.  If the id does not correspond to an existing object a value of "Unknown" is returned.
+
+= Example =
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}0/zidestore/so/{USER}/')
+print server.zogi.getTypeOfObject(10120)
+print server.zogi.getTypeOfObject(11150)
+print server.zogi.getTypeOfObject(10930)
+print server.zogi.getTypeOfObject(40)
+}}}
+
+= Results =
+
+{{{
+Contact
+Enterprise
+Task
+Unknown
+}}}
+
+[http://code.google.com/p/zogi/ Home]

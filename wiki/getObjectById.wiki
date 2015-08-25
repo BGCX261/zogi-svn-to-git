@@ -1,0 +1,22 @@
+#summary The getObjectById method
+
+The [getObjectById] method permits a single object to be requested from the server.  [getObjectById] is simply the singular form of [getObjectsById].  If possible it is recommended that you retrieve all the object you need for an operation in a single request using [getObjectsById].
+
+The first parameter is the object id as a number or string and the second parameter is the level of detail to retrieve.
+
+*NOTE:* If you request an objectId that does not exist you will receive an [Unknown] entity as a response.
+
+= Example =
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOST}/zidestore/so/{USER}/')
+print server.zogi.getObjectById(19100, 65535)
+}}}
+
+= Result =
+
+The result of this method is a dictionary of the type of the object specified.
+
+[http://code.google.com/p/zogi/ Home]

@@ -1,0 +1,33 @@
+#summary The deleteObject method.
+
+= Introduction =
+
+Delete an object from the server.  The first parameter is either an entity or an number or string representing an object id.  The second parameter is optional and if provided must be either an array of strings or a comma delimited list of values.  This second parameter operates in the same manner as the *FLAGS* special key does in [putObject]; it provides hints on how the operation is to be performed.
+
+*NOTE:* Tasks cannot be deleted,  attempting to delete a task will result in an exception.
+
+== Hint flags by entity type ==
+  * [Appointment]-  If the appointment is a cyclic appointment specifying the "deleteCycle" flag will cause all the appointments in the cycle of the specified appointment to be deleted.
+
+= Example =
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib, time, sys
+server = xmlrpclib.Server('http://awilliam:fred@localhost/zidestore/so/awilliam/')app = { }
+app['entityName'] = 'Appointment'
+app['objectId'] = '0'
+app['keywords'] = 'ZOGI'
+app['comment'] = 'COMMENT COMMENT COMMENT'
+app['start'] = '2006-11-30 13:00'
+app['end'] = '2006-11-30 15:00'
+app['title'] = 'My New 2007 Appointment'
+app['location'] = 'Sardinia'
+app['_FLAGS'] = 'ignoreConflicts'
+app['_PARTICIPANTS'] = [ participant1, participant2 ]
+app = server.zogi.putObject(app)
+#app = server.zogi.deleteObject(app, ['deleteCycle'])
+app = server.zogi.deleteObject(app['objectId'])
+}}}
+
+[http://code.google.com/p/zogi/ Home]

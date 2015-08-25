@@ -1,0 +1,5 @@
+#summary What is OpenGroupware
+
+OpenGroupware is an full-featured enterprise-ready Open Source groupware solution maintained and developed by the [http://www.opengroupware.org OpenGroupware.org] community.
+
+[http://code.google.com/p/zogi/ Home]

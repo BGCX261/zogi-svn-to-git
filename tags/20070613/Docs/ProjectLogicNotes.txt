@@ -1,0 +1,57 @@
+"check-permission" = { class = "LSCheckPermissionProjectCommand"; };
+"check-get-permission" = { class = "LSCheckGetPermissionProjectCommand"; };
+"check-write-permission" = { class= "LSCheckWritePermissionProjectCommand"; };
+------------------------
+"get-persons"        = { class = "LSFetchPersonRelationCommand";   };
+
+key = [obj valueForKey:@"projectId"]
+personEntity = [[self databaseModel] entityNamed:@"Person"];
+qualifier = [[EOSQLQualifier alloc] initWithEntity:personEntity
+                 qualifierFormat:@"(%A = %@) AND (%A = %@)",
+                                 @"toProjectCompanyAssignment.projectId",
+                                 key,
+                                 @"toProjectCompanyAssignment.hasAccess",
+                                 [NSNumber numberWithBool:NO]];
+
+projectId = 11000 AND has_access = 0
+--------------------------
+  "get-enterprises" = { class = "LSFetchEnterpriseRelationCommand"; };
+
+  enterpriseEntity = [[self databaseModel] entityNamed:@"Enterprise"];
+  qualifier = [[EOSQLQualifier alloc] initWithEntity:enterpriseEntity
+                                   qualifierFormat:
+                                   @"%A = %@",
+                                   @"toProjectCompanyAssignment.projectId",
+                                   [[self object] valueForKey:@"projectId"]];
+  [qualifier setUsesDistinct:YES];
+
+projectId = 11000 
+-------------------------
+  "get-teams"       = { class = "LSFetchTeamRelationCommand";       };
+
+  key = [obj valueForKey:@"projectId"];
+  personEntity = [[self databaseModel] entityNamed:@"Team"];
+  qualifier = [[EOSQLQualifier alloc] initWithEntity:personEntity
+                                   qualifierFormat:
+                                     @"(%A = %@) AND (%A = %@)",
+                                     @"toProjectCompanyAssignment.projectId",
+                                     key,
+                                     @"toProjectCompanyAssignment.hasAccess",
+                                     [NSNumber numberWithBool:YES]];
+
+  projectId = 11000 AND has_access = 1
+----------------
+  "get-by-globalid" = { class = "LSGetProjectForGlobalIDs";         };
+---------------
+  "get-accounts"    = { class = "LSFetchAccountRelationCommand";    };
+
+  key = [obj valueForKey:@"projectId"];
+  personEntity = [[self databaseModel] entityNamed:@"Person"];
+  qualifier = [[EOSQLQualifier alloc] initWithEntity:personEntity
+                qualifierFormat:@"(%A = %@) AND (%A = %@)",
+                                 @"toProjectCompanyAssignment.projectId",
+                                  key,
+                                  @"toProjectCompanyAssignment.hasAccess",
+                                  [NSNumber numberWithBool:YES]];
+
+projectId = 11000 AND has_access = 1

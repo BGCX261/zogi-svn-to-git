@@ -1,0 +1,87 @@
+#summary The taskNotation entity
+
+= Examples =
+
+== Performing Task Actions ==
+
+[Task] notations are created by performing task actions.  Actions can be posted to the server using the [putObject] method.  To perform a task action post a four element dictionary to the server.
+
+{{{
+notation = {}
+notation['entityName'] = 'taskNotation'
+notation['taskObjectId'] = task['objectId']
+notation['comment'] = 'Perform accept'
+notation['action'] = 'accept'
+print server.zogi.putObject(notation);
+}}}
+
+The "action" key may have a value of "accept", "comment", "done", "archive", "reactivate", or "reject".
+
+== taskNotations ==
+
+{{{
+{'comment': 'COMMENT COMMENT COMMENT',
+ 'actionDate': <DateTime u'20061205T11:58:44' at -484cd194>,
+ 'objectId': 38330,
+ 'entityName': 'taskNotation',
+ 'taskStatus': '00_created',
+ 'taskObjectId': 38320,
+ 'action': '00_created',
+ 'actorObjectId': 10120}
+
+{'comment': 'Reject this',
+ 'actionDate': <DateTime u'20061205T11:58:44' at -484cd174>,
+ 'objectId': 38510,
+ 'entityName': 'taskNotation',
+ 'taskStatus': '02_rejected',
+ 'taskObjectId': 38320,
+ 'action': '02_rejected',
+ 'actorObjectId': 10120}
+
+{'comment': 'Perform accept',
+ 'actionDate': <DateTime u'20061205T11:58:44' at -484cd0f4>,
+ 'objectId': 38360,
+ 'entityName': 'taskNotation',
+ 'taskStatus': '20_processing',
+ 'taskObjectId': 38320,
+ 'action': '05_accepted',
+ 'actorObjectId': 10120}
+
+{'comment': 'THIS IS A COMMENT!!!',
+ 'actionDate': <DateTime u'20061205T11:58:44' at -484cd074>,
+ 'objectId': 38390,
+ 'entityName': 'taskNotation',
+ 'taskStatus': '20_processing',
+ 'taskObjectId': 38320,
+ 'action': '10_commented',
+ 'actorObjectId': 10120}
+
+{'comment': 'Mark as done',
+ 'actionDate': <DateTime u'20061205T11:58:44' at -484caf34>,
+ 'objectId': 38420,
+ 'entityName': 'taskNotation',
+ 'taskStatus': '25_done',
+ 'taskObjectId': 38320,
+ 'action': '25_done',
+ 'actorObjectId': 10120}
+
+{'comment': 'Reactivate this',
+ 'actionDate': <DateTime u'20061205T11:58:44' at -484caf14>,
+ 'objectId': 38480,
+ 'entityName': 'taskNotation',
+ 'taskStatus': '00_created',
+ 'taskObjectId': 38320,
+ 'action': '27_reactivated',
+ 'actorObjectId': 10120}
+ 
+{'comment': 'Archive this',
+ 'actionDate': <DateTime u'20061205T11:58:44' at -484cae94>,
+ 'objectId': 38450,
+ 'entityName': 'taskNotation',
+ 'taskStatus': '30_archived',
+ 'taskObjectId': 38320,
+ 'action': '30_archived',
+ 'actorObjectId': 10120}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

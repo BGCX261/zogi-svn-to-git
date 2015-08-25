@@ -1,0 +1,35 @@
+#summary Sub-project to support the Horde application suite.
+
+= Introduction =
+
+*HordOGo* is a project to provide support for using OpenGroupware as a backend to the [http://www.horde.org Horde] application suite.  Currently *HordOGo* resides in the zOGI code repository under the PHP bindings.
+
+= Screenshots =
+  
+  * [http://zogi.googlecode.com/files/ddv5htgd_27f9wb7qgw.png Horde setup with HordOGo]
+
+= Status =
+
+  * Authentication
+    * [http://code.google.com/p/zogi/source/browse/trunk/Bindings/PHP/HordOGo/Auth/zogi.php Code]
+    * Status: Working
+  * Groups
+    * [http://code.google.com/p/zogi/source/browse/trunk/Bindings/PHP/HordOGo/Group/zogi.php Code]
+    * Status: Partially working.
+  * [http://www.horde.org/turba/ Turba] (address book)
+    * [http://code.google.com/p/zogi/source/browse/trunk/Bindings/PHP/HordOGo/Turba/zogi.php Code]
+    * Status: Under development
+  * [http://www.horde.org/kronolith/ Kronolith] (calendar)
+    * Status: Not yet planned.
+    * Questions: What events should appear on the calendar?  Should this be just the user's appointments or use their panel?
+  * [http://www.horde.org/nag/ NAG] (todo)
+    * Status: Not yet planned.
+    * Questions: NAG is a *very* simple application, and not very "groupware" like.  It may ultimately not be possible to rationally map the meager functionality of the NAG onto OpenGroupware's powerful task application.
+  * [http://www.horde.org/mnemo/ Mnemo] (notes)
+    * Status: Not yet planned.
+    * Questions: There isn't currently a notes / journal application in OpenGroupware.  Therefore Mnemo probably won't have a driver.
+  * [http://www.horde.org/wicked/ Wicked] (Wiki)
+    * Status: Planned
+    * Questions: Planned.
+
+[http://code.google.com/p/zogi/ Home]

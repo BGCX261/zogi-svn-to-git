@@ -1,0 +1,3 @@
+#summary The participant entity
+
+This page is obsolete, see [https://sourceforge.net/p/coils/wiki/participant/]

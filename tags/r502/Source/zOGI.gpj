@@ -1,0 +1,46 @@
+!516;s
+O
+SAU0PATH+=%<JGRASP_PATHS>%;
+SCU0PATH+=%<JGRASP_PATHS>%;
+S+U0PATH+=%<JGRASP_PATHS>%;
+SJU0CLASSPATH=+%;%<EXTENSION_CLASSPATHS>\012CLASSPATH+=%<JGRASP_CLASSPATHS>%;\012CLASSPATH+=.%;\012PATH+=%<JAVA_BIN_DIR>%;\012PATH+=%<JGRASP_PATHS>%;\012Compile\012NOT_FOUND_MESSAGE==Make sure you have the full JDK (J2SE SDK or other), not just the JRE, installed.\\nThe J2SE SDK is available from java.sun.com.\012Run_Applet +Debug_Applet\012ADD_APPLETVIEWER_CLASSPATH==Y\012
+SOU0PATH+=%<JGRASP_PATHS>%;
+SPU0
+s#i0
+s#k0
+s#j0
+s#l0
+!282;d
+[\012  grasp [\012   legendy -55.0\012   legendx 195.0\012   winflags 0\012   height 400\012   width 435\012   wbp 0\012   initlayout 0\012   yoffs -140.5\012   xoffs 49.9609375\012   scale 1.0\012   args ""\012   otherflags 139\012   visflags 118423679\012  ]\012  directed 1\012 ]!21;a
+a%\011zOGI_doc%s	b	c1!346;g
+%\011zOGIAction.h
+%\011zOGISchedularAction.m
+%\011zOGISchedularAction.h
+%\011zOGIACLAction.m
+%\011common.h
+%\011zOGIAction.m
+%\011zOGIGenericAction.m
+%\011zOGIProduct.m
+%\011NSString+SearchingAdditions.h
+%\011zOGIProduct.h
+%\011zOGIACLAction.h
+%\011zOGIGenericAction.h
+%\011NSString+SearchingAdditions.m
+%\011NSObject+zOGI.h
+%\011NSObject+zOGI.m
+!301;f
+%	zOGIAction.h
+%	zOGISchedularAction.m
+%	zOGISchedularAction.h
+%	zOGIACLAction.m
+%	common.h
+%	zOGIAction.m
+%	zOGIGenericAction.m
+%	zOGIProduct.m
+%	NSString+SearchingAdditions.h
+%	zOGIProduct.h
+%	zOGIACLAction.h
+%	zOGIGenericAction.h
+%	NSString+SearchingAdditions.m
+%	NSObject+zOGI.h
+%	NSObject+zOGI.m

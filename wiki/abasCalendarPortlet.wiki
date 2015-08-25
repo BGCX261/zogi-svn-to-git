@@ -1,0 +1,23 @@
+#summary The abas-Calendar-Portlet
+
+= Introduction =
+
+The abas-Calendar-Portlet, developed by Tobias Kaefer, is a JSR168-calendar-portlet for use with Java application servers.
+
+[http://code.google.com/p/zogi/ Home]
+
+= Screenshots =
+
+[http://zogi.googlecode.com/svn/wiki/CalendarPortletMonth.png]
+Month view
+
+[http://zogi.googlecode.com/svn/wiki/CalendarPortletNewAppointment.png]
+New appointment
+
+[http://zogi.googlecode.com/svn/wiki/CalendarPortletWorkWeek.png]
+Work week
+
+[http://zogi.googlecode.com/svn/wiki/CalendarPortletWorkWeekDetails.png]
+Work week in detail
+
+[http://code.google.com/p/zogi/ Home]

@@ -1,0 +1,150 @@
+#!/usr/bin/jython
+# Python imports
+import pprint, sys, string
+# Java Imports
+from com.ziclix.python.sql import zxJDBC
+import org.apache.xmlrpc.client as xmlrpc
+from java.util import Vector
+from java.util import Hashtable
+from java.net  import URL
+
+def sqlConnect(_username, _password):
+  conn = zxJDBC.connect("jdbc:informix-sqli://192.168.1.60:1526/miecr:Informixserver=BARNET", 
+                      _username,
+                      _password,
+                      "com.informix.jdbc.IfxDriver")
+  return conn
+
+def sqlDisconnect(_conn):
+  _conn.close()
+
+def zogiConnect(_host, _username, _password):
+  url = "http://%s/zidestore/so/%s/" % ( _host, _username )
+  client = xmlrpc.XmlRpcClient()
+  config = xmlrpc.XmlRpcClientConfigImpl()
+  config.setServerURL(URL(url))
+  config.basicUserName = _username
+  config.basicPassword = _password
+  client.setConfig(config)
+  return client
+
+def _removeAllocations(_sqlServer, _contactId):
+  sql = 'DELETE FROM hedera_call_allocation' + \
+        ' WHERE contact_id = ?;' 
+  c = _sqlServer.cursor()
+  c.execute(sql, [ _contactId ])
+  c.close()
+
+def isInt( _str ):
+  """ Is the given string an integer?	"""
+  ok = 1
+  try:
+    num = int(_str)
+  except ValueError:
+    ok = 0
+  return ok
+
+# Main Routine
+sqlServer =  sqlConnect('*******', '********')
+print 'connected to RDBMS'
+gwServer = zogiConnect('gourd-amber', '*******', '*******')
+print 'connected to groupware'
+inFile = open('ConceptServices.dlm.csv', 'rb')
+eFile = open('Enterprises.dlm', 'wb+')
+cFile = open('Contacts.dlm', 'wb+')
+count = 0
+while 1:
+  row = inFile.readline()
+  if (row == ''):
+    break
+  if count > 0:
+    enterpriseId = ("%s" % row.split('|')[0]).strip()
+    bankCode = ("%s" % row.split('|')[1]).strip()
+    fleetSize = ("%s" % row.split('|')[2]).strip()
+    params = Vector()
+    params.add(enterpriseId);
+    params.add(264);
+    enterprise = gwServer.execute('zogi.getObjectById', params)
+    print 'Got enterprise#%s' % enterprise['objectId']
+    # dig out phone & fax
+    for x in enterprise['_PHONES']:
+      if (x['type'] == '01_tel'):
+        tel1 = x['number'] 
+      else:
+        if (x['type'] == '10_fax'):
+          fax1 = x['number']
+    # dig out ship address
+    for x in enterprise['_ADDRESSES']:
+      if (x['type'] == 'ship'):
+        addr = x
+    eFile.write(('%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s\n' %
+                    ( enterpriseId, bankCode, 
+                      enterprise['version'], enterprise['name'],
+                      tel1, fax1,
+                      addr['street'], addr['city'], addr['state'], addr['zip'],
+                      enterprise['url'], fleetSize )))
+    eFile.flush()
+    #Build contact file
+    for x in enterprise['_CONTACTS']:
+      params = Vector()
+      params.add(x['targetObjectId'])
+      params.add(65535);
+      try:
+        print '  Requesting contact %s for enterprise %s' % (
+          x['targetObjectId'], enterpriseId)
+        contact = None
+        contact = gwServer.execute('zogi.getObjectById', params)
+        print '    Got contact %s [%s, %s]' % (
+           contact['objectId'], contact['lastName'], contact['firstName'])
+        # Dig out office, fax, & mobile phones
+        tel1 = fax1 = mobile1 = None
+        for x in contact['_PHONES']:
+          if (x['type'] == '01_tel'):
+            tel1 = x['number']
+          elif (x['type'] == '10_fax'):
+            fax1 = x['number']
+          elif (x['type'] == '03_tel_funk'):
+            mobile1 = x['number']
+        # Dig out mailing address
+        addr = None
+        for x in contact['_ADDRESSES']:
+          if (x['type'] == 'mailing'):
+            addr = x
+        # Dig out company values - job_title & email1
+        email1 = jobTitle = None
+        headboy = 'no'
+        emailYN = mailYN = faxYN = 'yes'
+        for x in contact['_COMPANYVALUES']:
+          if (x['attribute'] == 'email1'):
+            email1 = x['value']
+          elif (x['attribute'] == 'job_title'):
+            jobTitle = x['value']
+          elif (x['attribute'] == 'headboy'):
+            headboy = x['value']
+          elif (x['attribute'] == 'receive_mail'):
+            mailYN = x['value']
+          elif (x['attribute'] == 'receive_email'):
+            emailYN = x['value']
+          elif (x['attribute'] == 'receive_fax'):
+            faxYN = x['value']
+        # Write contact to file
+        cFile.write(('%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s|%s\n' %
+                       (enterpriseId,
+                        contact['objectId'], contact['version'],
+                        contact['firstName'], contact['middleName'],
+                        contact['lastName'], contact['salutation'],
+                        contact['gender'], contact['birthDate'],
+                        jobTitle, tel1, mobile1, fax1, email1,
+                        addr['name1'], addr['name2'], addr['name3'],
+                        addr['street'], addr['city'], addr['state'],
+                        addr['zip'], headboy, emailYN, mailYN, faxYN)))
+        cFile.flush() 
+        # Delete call allocations
+        _removeAllocations(sqlServer, contact['objectId'])
+      except:
+        print "Exception processing contact:", sys.exc_info()[0]
+  count = count + 1
+eFile.close()
+cFile.close()
+inFile.close()
+  

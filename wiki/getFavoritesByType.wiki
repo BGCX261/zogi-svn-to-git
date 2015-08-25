@@ -1,0 +1,28 @@
+#summary The getFavoritesByType method
+
+The getFavoritesByType method retrieves the objects of the specified type that the user has marked as favorite.
+
+First parameter is the entity name and the second parameter is the detail level.
+
+*NOTE:* Favorite management was heavily revised in r453.  This release introduced the [unflagFavorites] and [flagFavorites] methods.
+
+= Example =
+
+{{{
+#!/usr/bin/env python
+import xmlrpclib
+server = xmlrpclib.Server('http://{USER}:{PASSWORD}@{HOSTNAME}/zidestore/so/{USER}/')
+print server.zogi.getFavoritesByType('Project', 65535)
+print server.zogi.getFavoritesByType("Enterprise", 65535)
+print server.zogi.getFavoritesByType("Contact", 65535)
+}}}
+
+= Result =
+
+Result is an array, possibly empty, of the objects of the specified type that the user has marked as favorite.
+
+= Note =
+
+OpenGroupware currently only stores favorites for Projects, Enterprises, and Contacts.
+
+[http://code.google.com/p/zogi/ Home]

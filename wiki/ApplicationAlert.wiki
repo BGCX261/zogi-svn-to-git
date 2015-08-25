@@ -1,0 +1,7 @@
+#summary ApplicationAlert
+
+The purpose of the [ApplicationAlert] entity is to enable the server to notify clients of significant issues such as high load, impending shutdown, or critical errors.  However the specific structure of the alert has yet to be determined.
+
+See also: See also: [PluginData] and [UserAlert].
+
+[http://code.google.com/p/zogi/ Home]

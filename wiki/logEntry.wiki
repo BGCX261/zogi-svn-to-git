@@ -1,0 +1,39 @@
+#summary The logEntry entity.
+
+As of revision 239 the logEntry entity also contains an "entityObjectId" element that contains the objectId of the object which the log entry refers to,
+
+See the [getAuditEntries] method for a mechanism to retrieve logEntry entities for syncronization / auditing purposes.
+
+= Example =
+
+{{{
+{'action': '00_created',
+ 'actionDate': <DateTime '20060914T11:13:50' at b79e502c>,
+ 'actorObjectId': 10120,
+ 'entityName': 'logEntry',
+ 'message': 'Company created',
+ 'objectId': 11050}
+
+{'action': '05_changed',
+ 'actionDate': <DateTime '20060914T11:13:50' at b79e504c>,
+ 'actorObjectId': 10120,
+ 'entityName': 'logEntry',
+ 'message': 'Address changed',
+ 'objectId': 11130}
+
+{'action': '05_changed',
+ 'actionDate': <DateTime '20060914T11:13:50' at b79e544c>,
+ 'actorObjectId': 10120,
+ 'entityName': 'logEntry',
+ 'message': 'Address changed',
+ 'objectId': 11140}
+
+{'action': '05_changed',
+ 'actionDate': <DateTime '20070108T23:02:01' at b79e552c>,
+ 'actorObjectId': 10120,
+ 'entityName': 'logEntry',
+ 'message': 'company changed',
+ 'objectId': 336760}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

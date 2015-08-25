@@ -1,0 +1,81 @@
+#summary The Task entity
+
+= Attributes =
+
+  * *sensitivity* - This attribute relates to an element that was added to [OpenGroupware] in order to better support Microsoft Outlook.  The values correspond to those defined in MSDN for the corresponding field.
+   * 0 = undefined / public (rendered as PUBLIC in vCard / iCal)
+   * 1 =  personal (not rendered in vCard/iCal)
+   * 2 = private  (rendered as PRIVATE in vCard/iCal)
+   * 3 = confidential (rendered as CONFIDENTIAL in vCard/iCal)
+  * *priority* - Specifies the urgency of the task.
+   * 1 = Very high
+   * 2 = High
+   * 3 = Average (the default?)
+   * 4 = Low
+   * 5 = Very low
+  * *status* - The current state of the task,  this value is read-only and is affected by performing actions on the task.  Actions are performed via zOGI by putting [taskNotation] objects to the server.
+   * 00_created = Task has been created or reactivated but not yet accepted.
+   * 02_rejected = Task has been rejected by the executor.
+   * 10_archived / 30_archived = Task has been archived by the creator.
+   * 20_processing = The task has been accepted by the executor.
+   * 25_done = The task is considered completed by the executor.
+  * *parentTaskObjectId* - The parent task of the task.  If this value is empty the task has no parent and is either a root (top-level) or stand-alone [Task].  This attribute was added to zOGI in revision 2185 (2009-03-25).  The value of this attribute must be the objectId of another [Task] or empty;  a task may have one parent and any number of children.  It is the responsibility of the client application(s) to avoid recursive looping in the task hierarchy.
+  * *graph* - The *graph* attribute represents the hierarchy of tasks for the task in question;  The dictionary in the graph represents the full task hierarchy (from the top level job down) regardless of the current tasks position in the hierarchy.  
+   * The *graph* attribute is included in the [Task] if the task is requested with a detail level including membership (128) as the task is considered a memer of the hierarchy.
+   * This attribute was introduced in ZideStore revision 2188 (2009-03-30).
+   * Support for the "graph" attribute at detail level membership (128) is available in OpenGroupware Coils with version 0.1.45 or higher.
+  * *creatorObjectId* / *ownerObjectId* - *ownerObjectId* was added in zOGI revision 1011 / ZideStore revision 2274 to resolve enhancement [http://bugzilla.opengroupware.org/bugzilla/show_bug.cgi?id=2027 Bug#2027].  In most cases the *creatorObjectId* and *ownerObjectid* will be the same;  however, if a *OGoHelpDeskRoleName* is defined members of that team can create teams with owner's other than themselves.  Delegated and archived task lists are derived from owner rather than creator in versions of OpenGroupware after revision 2273.  The purpose of this behavour is to allow help desk users to create tasks on behalf of other users and then drop out of the workflow - subsequent actions and notifications will be between the executor and the owner.  The *creatorObjectId* will always be the user who actually created the [Task].
+
+= Example =
+
+{{{
+{'comment': 'COMMENT COMMENT COMMENT',
+ 'sensitivity': 2, 
+ 'percentComplete': 40, 
+ 'keywords': 'ZOGI', 
+ 'category': '', 
+ 'completionDate': '', 
+ 'end': <DateTime '20070125T00:00:00' at 815416c>, 
+ '_OBJECTLINKS': [{'direction': 'from', 
+                   'objectId': '15990', 
+                   'entityName': 'objectLink', 
+                   'targetEntityName': 'Contact', 
+                   'targetObjectId': '10000', 
+                   'label': 'Object Link Label', 
+                   'type': 'generic'}], 
+ 'objectId': 476660, 
+ 'priority': 2, 
+ 'start': <DateTime '20061231T00:00:00' at 815408c>, 
+ 'version': 2, 
+ 'accountingInfo': 'Accounting Info', 
+ '_PROPERTIES': [], 
+ 'executantObjectId': 10160, 
+ 'entityName': 'Task', 
+ 'status': '20_processing', 
+ 'creatorObjectId': 10160, 
+ 'ownerObjectId': 54720,
+ 'associatedContacts': '', 
+ 'associatedCompanies': '', 
+ 'timerDate': '', 
+ 'kilometers': '34', 
+ 'totalWork': 75, 
+ '_NOTES': [], 
+ 'isTeamJob': 0, 
+ 'parentTaskObjectId': 11409747,
+ 'kind': '', 
+ 'name': 'Updated ZOGI Task 5', 
+ 'lastModified': '', 
+ 'objectProjectId': '', 
+ 'actualWork': 23, 
+ 'graph': {'12339323': {'12677171': {},
+                        '12710721': {},
+                        '12710725': {},
+                        '12736451': {},
+                        '12739574': {},
+                        '12751507': {'11409747': {'476660': {}},
+                                     '4560420': {}},
+                        '12757951': {}}},
+ 'notify': 1}
+}}}
+
+[http://code.google.com/p/zogi/ Home]

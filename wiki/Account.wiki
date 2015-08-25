@@ -1,0 +1,74 @@
+#summary The Account entity
+
+It an [Account] corresponds to a person, then the [Account] and the [Contact] entity will share the same objectId.  Thus the only way to retrieve an account object in most cases is via [getLoginAccount] which returns the account entity of the logged in account.  Otherwise you are better off requesting the [Contact] entity, as it contains more information than the [Account] entity.
+
+= Example =
+
+{{{
+{
+  '_OBJECTLINKS': [
+    {'direction': 'from', 
+     'objectId': '31430', 
+     'entityName': 'ObjectLink', 
+     'targetEntityName': 'Enterprise', 
+     'targetObjectId': '20590', 
+     'label': ' OGo20590', 
+     'type': 'generic'}
+   ], 
+  'objectId': 10120, 
+  'entityName': 'Account', 
+  '_LOGS': [
+    {'actionDate': <DateTime u'20060630T15:31:10' at -484c9194>, 
+     'objectId': 10240, 
+     'entityName': 'logEntry', 
+     'action': '00_created', 
+     'message': 'Company created', 
+     'actorObjectId': 10000}, 
+   ...
+   ], 
+  'version': 4, 
+  '_PROPERTIES': [], 
+  'login': 'awilliam'
+}
+}}}
+
+If requested with a detail level of 128 zOGI_INCLUDE_MEMBERSHIP then *TEAMS* key will contains the [Team] entities that the account is a member of rendered at the same detail level.
+{{{
+{'_TEAMS': [{'entityName': 'Team',
+             'memberObjectIds': [10100, 9144860, 195180, 1130160, 54720],
+             'name': 'MVP (Parts QC)',
+             'objectId': 55000,
+             'objectVersion': 7,
+             'ownerObjectId': 10000},
+            {'entityName': 'Team',
+             'memberObjectIds': [11120, 10100, 9144860, 195180, 26850],
+             'name': 'OGo (news editors)',
+             'objectId': 9991,
+             'objectVersion': 6,
+             'ownerObjectId': ''},
+            {'entityName': 'Team',
+             'memberObjectIds': [1189570,
+                                 1179090,
+                                 10100,
+                                 1254780,
+                                 1194780,
+                                 828920,
+                                 1071330],
+             'name': 'all intranet',
+             'objectId': 10003,
+             'objectVersion': 4,
+             'ownerObjectId': ''},
+            {'entityName': 'Team',
+             'memberObjectIds': [10100, 9144860, 26850],
+             'name': 'team creators',
+             'objectId': 9981,
+             'objectVersion': 2,
+             'ownerObjectId': 10000}],
+ 'entityName': 'Account',
+ 'login': 'adam',
+ 'objectId': 10100,
+ 'version': 568}
+}}}
+
+
+[http://code.google.com/p/zogi/ Home]

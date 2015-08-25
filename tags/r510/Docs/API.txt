@@ -1,0 +1,12 @@
+zogi.getLoginAccount(int detail)
+zogi.getTypeOfObject(int objectId)
+zogi.getObjectsById(Array objectIds, int detail)
+zogi.getObjectById(int objectId, int detail)
+zogi.getObjectVersionsById(Array objectIds)
+zogi.putObject(dictionary object)
+zogi.searchForObjects(string type, mixed query, int detail)
+zogi.getFavoritesByType(string type, int detail)
+zogi.flagFavorites(Array objectIds)
+zogi.unflagFavorites(Array objectIds)
+zogi.getACLsForObjectId
+zogi.putTaskNotation
